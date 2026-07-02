@@ -136,6 +136,11 @@
   .bar .grow{flex:1}
   .speed{display:flex; align-items:center; gap:.4rem; font-size:.74rem; color:var(--tan-boku)}
   .speed input{accent-color:var(--shu)}
+  .modepick{display:flex; align-items:center; gap:.35rem; font-size:.74rem; color:var(--tan-boku)}
+  #mode{font-family:"Shippori Mincho",serif; font-size:.82rem; letter-spacing:.04em; color:var(--sumi);
+    padding:.42rem .55rem; border:1px solid #00000030; border-radius:2px; background:#f3ecda; cursor:pointer}
+  #mode:hover{background:#fbf5e6}
+  #mode:focus-visible{outline:2px solid var(--shu); outline-offset:2px}
 
   /* empty / toast */
   .empty{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:2rem}
@@ -169,6 +174,7 @@
   .fld input:focus, .fld textarea:focus, .fld select:focus{outline:2px solid var(--shu); outline-offset:1px}
   .fld.inline{display:flex; align-items:center; gap:.5rem; margin:0}
   .fld.inline select{width:auto; margin:0}
+  .fld.inline input{width:7em; margin:0}
   .sheet-row{display:flex; align-items:center; gap:.6rem; margin-top:.7rem}
   .sheet .hint{font-size:.68rem; color:var(--tan-boku); line-height:1.75; margin:.85rem 0 0}
 
@@ -186,14 +192,14 @@
 <div class="wrap">
   <header>
     <h1>連歌絵巻</h1>
-    <span class="sub">RDFの三つ組を、上五・中七・下五に詠み継ぐ</span>
+    <span class="sub">RDFの三つ組を、五七五に詠み継ぐ</span>
     <span class="count" id="count">〇句</span>
   </header>
 
   <div id="stage" aria-label="連なる句の絵巻">
     <div class="empty" id="empty">
-      <p><b>主語・述語・目的語を、句に</b>
-      「詠み始める」を押すと、読み込んだ n-triples が一句ずつ絵とともに立ち上がり、右から左へ連なります。句をなぞると読み下せます。</p>
+      <p><b>主語・述語・目的語を句に</b>
+      「詠み始める」を押すと、読み込んだ N-triples が一句ずつ絵とともに立ち上がり、右から左へ連なります。句をなぞると読み下せます。</p>
     </div>
   </div>
 
@@ -203,6 +209,10 @@
     <label class="file" tabindex="0">ファイルを選ぶ
       <input type="file" id="file" accept=".nt,.ttl,.n3,.txt,text/plain">
     </label>
+    <label class="modepick">表示<select id="mode">
+      <option value="compose">五七五で詠む</option>
+      <option value="raw">そのまま三行に</option>
+    </select></label>
     <button id="sparqlBtn">エンドポイント</button>
     <button id="reset">お手本にもどす</button>
     <span class="grow"></span>
@@ -218,22 +228,21 @@
     <label class="fld">エンドポイント URL
       <input id="ep" type="url" spellcheck="false" placeholder="https://dbpedia.org/sparql" value="https://dbpedia.org/sparql">
     </label>
-    <label class="fld inline" style="justify-content:flex-start; margin-top:.8rem">句の作り方
-      <select id="mode">
-        <option value="raw">ラベルをそのまま三行に</option>
-        <option value="compose">五七五に詠む（AI・季と絵つき）</option>
-      </select>
-    </label>
     <label class="fld">クエリ
-      <span class="note">SELECT で ?s ?p ?o を返します。<code>{{OFFSET}}</code> は毎回ランダムな整数、<code>{{RAND}}</code> は乱数に置換。<button type="button" id="qExample" class="mini">この形式のクエリ例を入れる</button></span>
+      <button type="button" id="qPlain" class="mini">素のトリプル</button>
+      <button type="button" id="qLabel" class="mini">日本語ラベル</button></span>
+      <span class="note">SELECT で ?s ?p ?o を返します。<code>{{OFFSET}}</code>/<code>{{RAND}}</code> は取得ごとに置換。三行かどうかはツールバーの「表示」で切り替えます。
       <textarea id="q" rows="9" spellcheck="false"></textarea>
     </label>
     <div class="sheet-row">
       <label class="fld inline">送信
         <select id="method"><option>GET</option><option>POST</option></select>
       </label>
+      <label class="fld inline" title="ランダムに選ぶ OFFSET の上限。小さくすると当たりが増え、大きくすると多様性が増します。">OFFSET上限
+        <input id="maxoff" type="number" min="0" step="1000" value="20000">
+      </label>
       <span class="grow"></span>
-      <button class="primary" id="sparqlGo">この設定で詠みはじめる</button>
+      <button class="primary" id="sparqlGo">このSPARQLで詠む</button>
     </div>
     <p class="hint">CORS を許可したエンドポイントが必要です（DBpedia・Wikidata・UniProt など）。「ラベルをそのまま三行に」は rdfs:label（日本語）を取り出し、?s ?p ?o をそのまま句にします。「五七五に詠む」はトリプルを題に AI が作句します（通信不可時は簡易生成）。どちらも OFFSET を10通り変えて約100件を先読みし、述語の保持数を抑えつつ直近の述語を避けて選ぶので、rdf:type のような多数派が鈴なりになりません。</p>
   </div>
@@ -725,13 +734,14 @@ async function mapPool(items, limit, fn){
 
 /* SPARQL の源：OFFSET を変えて複数回引き、約100件を先読みキャッシュ。
    述語(?p)の偏り（rdf:type 等）を、取り込み時のキャップと LRU 選択でならす。 */
-const SPARQL_MAX_OFFSET    = 500000000; // ランダム OFFSET の上限（簡便法）
+const SPARQL_MAX_OFFSET    = 20000; // ランダム OFFSET の既定上限（画面から変更可）
 const SPARQL_BATCH_QUERIES = 10;    // 一度のキャッシュで投げるクエリ数（×LIMIT ≒ 取得件数）
 const SPARQL_POOL          = 5;     // 同時接続数
 const SPARQL_PRED_CAP      = 5;     // バッファ内で同一述語を保持する上限
 const SPARQL_RECENT_K      = 8;     // 直近この数の述語は続けて選ばない
-function makeSparqlSource(endpoint, queryTpl, method){
-  const REFILL_AT   = 20;           // 残数がこれ以下で補充
+function makeSparqlSource(endpoint, queryTpl, method, maxOffset){
+  const MAX_OFFSET   = (Number.isFinite(maxOffset) && maxOffset >= 0) ? maxOffset : SPARQL_MAX_OFFSET;
+  const REFILL_AT    = 20;          // 残数がこれ以下で補充
   const DIVERSITY_AT = 5;           // 述語の種類がこれ未満でも補充
   let buffer  = [];
   let fetching = null;
@@ -760,7 +770,7 @@ function makeSparqlSource(endpoint, queryTpl, method){
 
   async function fill(){
     const offs = new Set();                    // 相異なる OFFSET を BATCH_QUERIES 個
-    while(offs.size < SPARQL_BATCH_QUERIES) offs.add(Math.floor(Math.random() * (SPARQL_MAX_OFFSET + 1)));
+    while(offs.size < SPARQL_BATCH_QUERIES) offs.add(Math.floor(Math.random() * (MAX_OFFSET + 1)));
     const settled = await mapPool([...offs], SPARQL_POOL, off => runSparql(endpoint, applyTpl(off), method));
     const ok = settled.filter(r => r.ok);
     if(ok.length === 0){                        // 全滅＝接続不可など。offset 0 で理由を表面化させる
@@ -891,9 +901,9 @@ async function composeNext(){
     const triple = await source.next();
     if(!triple){ toast('三つ組が尽きました'); stop(); return; }
     let verse;
-    if(source.mode === 'raw'){                 // ラベルをそのまま三行に
+    if(modeSel.value === 'raw'){               // ツールバーの「表示」＝そのまま三行に
       verse = rawVerse(triple);
-    }else{                                     // 五七五に詠む（AI、失敗時はローカル）
+    }else{                                     // 五七五で詠む（AI、失敗時はローカル）
       try{ verse = await compose(triple, prevVerse); }
       catch(_){ verse = composeLocal(triple, triple.s.label, humanize(triple.p.label), triple.o.label); }
     }
@@ -923,15 +933,17 @@ const sheet     = document.getElementById('sheet');
 const epInput   = document.getElementById('ep');
 const qInput    = document.getElementById('q');
 const methodSel = document.getElementById('method');
+const maxOffInput = document.getElementById('maxoff');
 
-const modeSel     = document.getElementById('mode');
-const qExampleBtn = document.getElementById('qExample');
+const modeSel   = document.getElementById('mode');    // ツールバーの表示切替（全ソース共通）
+const qPlainBtn = document.getElementById('qPlain');
+const qLabelBtn = document.getElementById('qLabel');
 
 /* エンドポイント用クエリの雛形 */
 const Q_RAW =
-`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT ?s ?p ?o WHERE {
+`PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?s ?p ?o
+WHERE {
   ?si ?pi ?oi .
   ?si rdfs:label ?s .
   ?pi rdfs:label ?p .
@@ -945,21 +957,17 @@ OFFSET {{OFFSET}}`;
 
 const Q_COMPOSE =
 `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-SELECT ?s ?p ?o WHERE {
+SELECT ?s ?p ?o
+WHERE {
   ?s ?p ?o .
   FILTER (?p != rdf:type)
 }
 LIMIT 10
 OFFSET {{OFFSET}}`;
 
-const presetFor = m => (m === 'raw' ? Q_RAW : Q_COMPOSE);
-qInput.value = presetFor(modeSel.value);       // 既定は「ラベルをそのまま三行に」
-
-modeSel.addEventListener('change', ()=>{        // 未編集の雛形なら、モードに合わせて差し替える
-  const cur = qInput.value.trim();
-  if(cur === '' || cur === Q_RAW.trim() || cur === Q_COMPOSE.trim()) qInput.value = presetFor(modeSel.value);
-});
-qExampleBtn.addEventListener('click', ()=>{ qInput.value = presetFor(modeSel.value); });
+qInput.value = Q_COMPOSE;                              // 初期表示
+qPlainBtn.addEventListener('click', ()=>{ qInput.value = Q_COMPOSE; });
+qLabelBtn.addEventListener('click', ()=>{ qInput.value = Q_RAW; });
 
 function openSheet(){ sheet.hidden = false; setTimeout(()=> epInput.focus(), 30); }
 function closeSheet(){ sheet.hidden = true; }
@@ -973,15 +981,15 @@ document.getElementById('sparqlGo').addEventListener('click', async ()=>{
   const endpoint = epInput.value.trim();
   const query    = qInput.value.trim();
   const method   = methodSel.value;
-  const mode     = modeSel.value;
+  let maxOff = parseInt(maxOffInput.value, 10);
+  if(!Number.isFinite(maxOff) || maxOff < 0) maxOff = SPARQL_MAX_OFFSET;
   if(!endpoint){ toast('エンドポイントの URL を入れてください'); return; }
   if(!/\?s\b/.test(query) || !/\?p\b/.test(query) || !/\?o\b/.test(query)){
     toast('クエリの SELECT に ?s ?p ?o を含めてください'); return;
   }
   stop();
   toast('エンドポイントに問い合わせています…');
-  const src = makeSparqlSource(endpoint, query, method);
-  src.mode = mode;
+  const src = makeSparqlSource(endpoint, query, method, maxOff);
   try{
     const n = await src.prime();
     if(!n){ toast('三つ組が返りませんでした（クエリを確認してください）'); return; }
