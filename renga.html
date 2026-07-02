@@ -725,7 +725,7 @@ async function mapPool(items, limit, fn){
 
 /* SPARQL の源：OFFSET を変えて複数回引き、約100件を先読みキャッシュ。
    述語(?p)の偏り（rdf:type 等）を、取り込み時のキャップと LRU 選択でならす。 */
-const SPARQL_MAX_OFFSET    = 20000; // ランダム OFFSET の上限（簡便法）
+const SPARQL_MAX_OFFSET    = 500000000; // ランダム OFFSET の上限（簡便法）
 const SPARQL_BATCH_QUERIES = 10;    // 一度のキャッシュで投げるクエリ数（×LIMIT ≒ 取得件数）
 const SPARQL_POOL          = 5;     // 同時接続数
 const SPARQL_PRED_CAP      = 5;     // バッファ内で同一述語を保持する上限
