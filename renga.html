@@ -100,8 +100,8 @@
     border-radius:2px; background:#f3ecda; cursor:pointer; letter-spacing:.04em; font-family:"Shippori Mincho",serif}
   .mini:hover{background:#fbf5e6}
 
-  /* tap-to-read: swap cursive → mincho */
-  .panel.reveal .line{font-family:"Shippori Mincho",serif; letter-spacing:.02em; color:#241f16; text-shadow:none}
+  /* タップで 五七五 ⇄ 三行 を詠み替え（生成中は淡く） */
+  .verse.composing{opacity:.35; transition:opacity .2s}
   .panel .reveal-hint{
     position:absolute; left:0; right:0; bottom:2.0rem; text-align:center;
     font-size:.6rem; color:var(--tan-boku); opacity:0; transition:opacity .3s; letter-spacing:.08em;
@@ -199,7 +199,7 @@
   <div id="stage" aria-label="連なる句の絵巻">
     <div class="empty" id="empty">
       <p><b>主語・述語・目的語を句に</b>
-      「詠み始める」を押すと、読み込んだ N-triples が一句ずつ絵とともに立ち上がり、右から左へ連なります。句をなぞると読み下せます。</p>
+      「詠み始める」または「一句詠む」を押すと、読み込んだトリプルが一句ずつ絵とともに立ち上がり、右から左へ連なります。</p>
     </div>
   </div>
 
@@ -672,27 +672,52 @@ function addPanel(triple, verse){
   const art = document.createElement('div'); art.className='art';
   const cv = document.createElement('canvas'); art.appendChild(cv);
 
-  const verseEl = document.createElement('div'); verseEl.className = 'verse' + (verse.raw ? ' raw' : '');
-  [verse.kami, verse.naka, verse.shimo].forEach(t=>{
-    const ln = document.createElement('div'); ln.className='line ink-in'; ln.textContent=t; verseEl.appendChild(ln);
-  });
-  verseEl.addEventListener('click', ()=> panel.classList.toggle('reveal'));
+  const verseEl = document.createElement('div'); verseEl.className = 'verse';
+  const foot = document.createElement('div'); foot.className = 'foot';
+  const hint = document.createElement('div'); hint.className = 'reveal-hint'; hint.textContent = 'タップで 五七五 ⇄ 三行';
+  panel.append(art, verseEl, hint, foot);
 
-  const hint = document.createElement('div'); hint.className='reveal-hint'; hint.textContent='なぞって読み下す';
+  // この句の二つの姿（五七五／そのまま三行）を保持し、タップで詠み替える
+  const forms = {}; const kindOf = v => (v.raw ? 'raw' : 'compose');
+  forms[kindOf(verse)] = verse;
+  let currentKind = kindOf(verse), toggling = false;
 
-  panel.append(art, verseEl, hint);
-
-  if(!verse.raw){                          // 素のトリプルを詠んだ時だけ、出典を足元に囁く
-    const foot = document.createElement('div'); foot.className='foot';
+  function setFoot(v){                        // 出典は「五七五」表示のときだけ足元に囁く
+    if(v.raw){ foot.style.display = 'none'; return; }
+    foot.style.display = '';
     const sTxt = triple.s.type==='literal' ? '“'+triple.s.label+'”' : triple.s.label;
     const oTxt = triple.o.type==='literal' ? '“'+triple.o.label+'”' : triple.o.label;
     foot.innerHTML = `<b>${esc(sTxt)}</b> ・ ${esc(humanize(triple.p.label))} ・ <b>${esc(oTxt)}</b>`;
-    panel.append(foot);
   }
-  stage.insertBefore(panel, stage.firstChild);   // 最新句は左端（縦書きの行と同じく右→左へ）
+  function paint(v, animate){
+    verseEl.className = 'verse' + (v.raw ? ' raw' : '');
+    verseEl.innerHTML = '';
+    [v.kami, v.naka, v.shimo].forEach(t=>{
+      const ln = document.createElement('div'); ln.className = 'line' + (animate ? ' ink-in' : ''); ln.textContent = t; verseEl.appendChild(ln);
+    });
+    setFoot(v);
+    requestAnimationFrame(()=> drawSumi(cv, v));   // レイアウト確定後に墨絵を描き替える
+  }
+  async function toggle(){
+    if(toggling) return;
+    const target = currentKind === 'compose' ? 'raw' : 'compose';
+    if(!forms[target]){
+      if(target === 'raw'){
+        forms.raw = rawVerse(triple);                 // 三行は即時
+      }else{                                          // 五七五は必要になって初めて詠む（AI、失敗時はローカル）
+        toggling = true; verseEl.classList.add('composing');
+        try{ forms.compose = await compose(triple, null); }
+        catch(_){ forms.compose = composeLocal(triple, triple.s.label, humanize(triple.p.label), triple.o.label); }
+        verseEl.classList.remove('composing'); toggling = false;
+      }
+    }
+    currentKind = target;
+    paint(forms[target], true);
+  }
+  verseEl.addEventListener('click', toggle);
 
-  // canvas はレイアウト確定後に描く
-  requestAnimationFrame(()=> drawSumi(cv, verse));
+  stage.insertBefore(panel, stage.firstChild);   // 最新句は左端（縦書きの行と同じく右→左へ）
+  paint(verse, true);                            // 初回描画（墨絵はレイアウト確定後）
 
   // 巻物の長さを制限（古い右端から巻き取る）
   while (stage.children.length > MAX_PANELS) stage.removeChild(stage.lastChild);
@@ -947,10 +972,11 @@ WHERE {
   ?si ?pi ?oi .
   ?si rdfs:label ?s .
   ?pi rdfs:label ?p .
-  ?oi rdfs:label ?o .
-  FILTER (lang(?s) = "ja")
-  FILTER (lang(?p) = "ja" || lang(?p) = "en")
-  FILTER (lang(?o) = "ja")
+  OPTIONAL { ?oi rdfs:label ?ol . }
+  BIND (IF (isLiteral(?oi), ?oi, ?ol) AS ?o)
+  FILTER (lang(?s) = "" || lang(?s) IN ("ja", "en"))
+  FILTER (lang(?p) = "" || lang(?p) IN ("ja", "en"))
+  FILTER (lang(?o) = "" || lang(?o) IN ("ja", "en"))
 }
 LIMIT 10
 OFFSET {{OFFSET}}`;
