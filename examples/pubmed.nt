@@ -1,100 +1,100 @@
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://nanbyodata.jp/ontology/NANDO_2201000> .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://purl.org/dc/terms/source> <https://www.nanbyou.or.jp/wp-content/uploads/upload_files/File/036-201704-kojin.pdf> .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/2000/01/rdf-schema#label> "Epidermolysis bullosa"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://nanbyodata.jp/ontology/NANDO_1100003> .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/2000/01/rdf-schema#label> "ひょうひすいほうしょう"@ja-Hira .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.kegg.jp/dbget-bin/www_bget?ds_ja:H00585> .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://nanbyodata.jp/ontology/NANDO_hasNotificationNumber> "36" .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://purl.org/dc/terms/description> "表皮水疱症は、主として先天的素因により、日常生活で外力の加わる部位に水疱が反復して生ずることを主な臨床症状とする一群の疾患である。本症は、遺伝形式、臨床症状並びに電顕所見に基づき30以上の亜型に細分されるが、各亜型間に共通する特徴をまとめることにより、７型、４型又は３型に大別される（表）。これらの分類法のうち、５大病型、すなわち、①単純型、②接合部型、③優性栄養障害型④劣性栄養障害型、及び⑤キンドラー症候群に分ける方法が最新の分類である。"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.mhlw.go.jp/file/06-Seisakujouhou-10900000-Kenkoukyoku/0000157760.docx> .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/2000/01/rdf-schema#label> "表皮水疱症"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://purl.org/dc/terms/identifier> "NANDO:1200234" .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.kegg.jp/dbget-bin/www_bget?ds_ja:H01737> .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/2004/02/skos/core#closeMatch> <http://purl.obolibrary.org/obo/MONDO_0006541> .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/2004/02/skos/core#prefLabel> "表皮水疱症"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200234> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.nanbyou.or.jp/entry/5339> .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://www.w3.org/2000/01/rdf-schema#label> "ジストロフィン異常症"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://www.w3.org/2004/02/skos/core#closeMatch> <http://purl.obolibrary.org/obo/MONDO_0016147> .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.kegg.jp/dbget-bin/www_bget?ds_ja:H00562> .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://www.w3.org/2000/01/rdf-schema#label> "じすとろふぃんいじょうしょう"@ja-Hira .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.nanbyou.or.jp/entry/4523> .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://purl.org/dc/terms/source> <https://www.nanbyou.or.jp/wp-content/uploads/upload_files/File/113-201704-kojin.pdf> .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://www.w3.org/2004/02/skos/core#prefLabel> "ジストロフィン異常症"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.mhlw.go.jp/file/06-Seisakujouhou-10900000-Kenkoukyoku/0000157176.docx> .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://purl.org/dc/terms/identifier> "NANDO:1200487" .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://www.w3.org/2000/01/rdf-schema#label> "Dystrophinopathies"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://nanbyodata.jp/ontology/NANDO_hasNotificationNumber> "113" .
-<http://nanbyodata.jp/ontology/NANDO_1200487> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://nanbyodata.jp/ontology/NANDO_1200486> .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://nanbyodata.jp/ontology/NANDO_1100001> .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://www.w3.org/2000/01/rdf-schema#label> "神経有棘赤血球症"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://www.w3.org/2000/01/rdf-schema#label> "Neuroacanthocytosis"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://www.w3.org/2004/02/skos/core#closeMatch> <http://purl.obolibrary.org/obo/MONDO_0016987> .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://purl.org/dc/terms/source> <https://www.nanbyou.or.jp/wp-content/uploads/upload_files/File/009-201704-kojin.pdf> .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://www.w3.org/2000/01/rdf-schema#label> "しんけいゆうきょくせっけっきゅうしょう"@ja-Hira .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://nanbyodata.jp/ontology/NANDO_hasNotificationNumber> "9" .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://www.w3.org/2004/02/skos/core#prefLabel> "神経有棘赤血球症"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://purl.org/dc/terms/identifier> "NANDO:1200013" .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.mhlw.go.jp/file/06-Seisakujouhou-10900000-Kenkoukyoku/0000157718.docx> .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.nanbyou.or.jp/entry/4052> .
-<http://nanbyodata.jp/ontology/NANDO_1200013> <http://purl.org/dc/terms/description> "神経有棘赤血球症には、数疾患が含まれている。代表は、有棘赤血球舞踏病とMcLeod症候群である。その他、ハンチントン病類症型（Huntington disease-like2）やパンテトン酸キナーゼ関連神経変性症（Pahtothenate kinase associated neurodegeneration：PKAN）（ハラールフォルデン・シュパッツ症候群（Hallervorden Spatz syndrome））などもこの群に含まれる。いずれも末梢血に有棘赤血球を認め、神経学的には舞踏運動を中心とする不随意運動を認める。我が国での疫学調査では全国で約100人程度の患者が見出されているが、詳細は不明である。"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2004/02/skos/core#prefLabel> "バージャー病"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2000/01/rdf-schema#label> "バージャー病"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://purl.org/dc/terms/source> <https://www.nanbyou.or.jp/wp-content/uploads/upload_files/File/047-201704-kojin.pdf> .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.kegg.jp/dbget-bin/www_bget?ds_ja:H01625> .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2004/02/skos/core#altLabel> "ビュルガー病"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://nanbyodata.jp/ontology/NANDO_1100004> .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2004/02/skos/core#altLabel> "Thromboangiitis obliterans"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://purl.org/dc/terms/identifier> "NANDO:1200266" .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.nanbyou.or.jp/entry/315> .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2000/01/rdf-schema#label> "ばーじゃーびょう"@ja-Hira .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2004/02/skos/core#altLabel> "閉塞性血栓血管炎"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://nanbyodata.jp/ontology/NANDO_hasNotificationNumber> "47" .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://syndromefinder.ncchd.go.jp/UR-DBMS/SyndromeDetail.php?winid=1&recid=9439> .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2004/02/skos/core#altLabel> "TAO"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2004/02/skos/core#closeMatch> <http://purl.obolibrary.org/obo/MONDO_0008889> .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2000/01/rdf-schema#label> "Buerger's disease"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://purl.org/dc/terms/description> "閉塞性血栓血管炎とも呼ばれ、四肢の主幹動脈に閉塞性の血管全層炎を来す疾患である。特に下肢動脈に好発して、虚血症状として間欠性跛行や安静時疼痛、虚血性皮膚潰瘍、壊疽（特発性脱疽とも呼ばれる）を来す。また、しばしば表在静脈にも炎症を来し（遊走性静脈炎）、まれに大動脈や内臓動静脈にも病変を来す。従前「ビュルガー病」と呼ばれていた。"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200266> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.mhlw.go.jp/file/06-Seisakujouhou-10900000-Kenkoukyoku/0000157866.docx> .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.nanbyou.or.jp/entry/4061> .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://nanbyodata.jp/ontology/NANDO_1200086> .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2004/02/skos/core#altLabel> "Type 5 FD"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2004/02/skos/core#altLabel> "Neurologic FD"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://purl.org/dc/terms/identifier> "NANDO:1200091" .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://syndromefinder.ncchd.go.jp/UR-DBMS/SyndromeDetail.php?winid=1&recid=2205> .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2000/01/rdf-schema#label> "進行性神経障害型ファーバー病"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2004/02/skos/core#altLabel> "Neurological Progressive variant"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://purl.org/dc/terms/source> <https://www.nanbyou.or.jp/wp-content/uploads/upload_files/File/019-09-201704-kojin.pdf> .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2000/01/rdf-schema#label> "しんこうせいしんけいしょうがいがたふぁーばーびょう"@ja-Hira .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://nanbyodata.jp/ontology/NANDO_hasNotificationNumber> "19" .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2000/01/rdf-schema#label> "Type 5 Farber disease"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2004/02/skos/core#altLabel> "Farber病（神経進行型）"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2004/02/skos/core#prefLabel> "進行性神経障害型ファーバー病"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://nanbyodata.jp/ontology/NANDO_2201224> .
-<http://nanbyodata.jp/ontology/NANDO_1200091> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.mhlw.go.jp/file/06-Seisakujouhou-10900000-Kenkoukyoku/0000157775.docx> .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://www.w3.org/2000/01/rdf-schema#label> "いでんせいじすとにあ"@ja-Hira .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.mhlw.go.jp/file/06-Seisakujouhou-10900000-Kenkoukyoku/0000157130.docx> .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://purl.org/dc/terms/source> <https://www.nanbyou.or.jp/wp-content/uploads/upload_files/File/120-201704-kojin.pdf> .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.nanbyou.or.jp/entry/4899> .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://www.w3.org/2000/01/rdf-schema#label> "遺伝性ジストニア"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://purl.org/dc/terms/description> "ジストニアとは持続性の筋収縮により生じる症状で、一部の患者では筋収縮の持続が短く不規則であったり、間歇的・律動的に観察されることもある。持続性の異常な筋収縮により姿位の異常を来すことが多い。ジストニアを症候として示す疾患には多々あるが、遺伝性があり、他の神経変性疾患に属さない疾患群を遺伝性ジストニアと呼ぶ。この群の中には、遺伝子が未だ同定されていない疾患群も多々あるが、ここでは遺伝性ジストニアのうち原因遺伝子が同定されている疾患群を扱う。遺伝性ジストニアは、遺伝子の異常によりジストニア症状を含む様々な症状を来す疾患で、DYTシリーズに属する群と金属代謝に関連するNBIAシリーズに属する疾患が多くを占める。 遺伝性ジストニアの多くは幼児から成年期（遅くても30歳代）に発症し、四肢、体幹、頭頸部のいずれかにジストニアを認める。ジストニアは進行性に症状の増悪や姿位の異常を来し、歩行障害、起立障害、座位障害を来す。疾患によっては他の不随意運動－例えば振戦、舞踏運動、ミオクローヌスなどを同時に示すことがある。また、精神発達遅滞や知的機能減退を示すこともある。遺伝性ジストニアの多くは進行性の病態を示し、発症要因については未解明な部分が多い。一般に、予後は不良であるが、疾患によっては対症療法によって症状の一部が軽快又は緩解する場合もある。この場合にも継続治療と適切な対症療法が必要である。厚生労働科学研究班及び国立精神・神経センター委託研究による研究班によれば、遺伝性ジストニアと診断された症例は全国で約500人である。また、NBIシリーズに関する調査ではNBIに罹患している症例数は100例未満である。"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://www.w3.org/2000/01/rdf-schema#label> "Hereditary dystonia"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://www.w3.org/2004/02/skos/core#closeMatch> <http://purl.obolibrary.org/obo/MONDO_0044807> .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://nanbyodata.jp/ontology/NANDO_hasNotificationNumber> "120" .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://purl.org/dc/terms/identifier> "NANDO:1200511" .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://nanbyodata.jp/ontology/NANDO_1100001> .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://www.w3.org/2004/02/skos/core#prefLabel> "遺伝性ジストニア"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200511> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://www.kegg.jp/dbget-bin/www_bget?ds_ja:H00831> .
-<http://nanbyodata.jp/ontology/NANDO_1200045> <http://www.w3.org/2004/02/skos/core#altLabel> "SCA1"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200045> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
-<http://nanbyodata.jp/ontology/NANDO_1200045> <http://www.w3.org/2000/01/rdf-schema#label> "Spinocerebellar ataxia type 1"@en .
-<http://nanbyodata.jp/ontology/NANDO_1200045> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://syndromefinder.ncchd.go.jp/UR-DBMS/SyndromeDetail.php?winid=1&recid=1108> .
-<http://nanbyodata.jp/ontology/NANDO_1200045> <http://www.w3.org/2000/01/rdf-schema#label> "脊髄小脳失調症１型"@ja .
-<http://nanbyodata.jp/ontology/NANDO_1200045> <http://purl.org/dc/terms/identifier> "NANDO:1200045" .
-<http://nanbyodata.jp/ontology/NANDO_1200045> <http://www.w3.org/2000/01/rdf-schema#label> "せきずいしょうのうしっちょうしょう1がた"@ja-Hira .
-<http://nanbyodata.jp/ontology/NANDO_1200045> <http://purl.org/dc/terms/source> <https://www.nanbyou.or.jp/wp-content/uploads/upload_files/File/018-201704-kojin.pdf> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18996892> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/nar/gkn732> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18996892> <http://purl.org/dc/terms/date> "2009"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18996892> <http://purl.org/dc/terms/creator> "Samarajiwa SA, Forster S, Auchettl K, Hertzog PJ" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18996892> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Nucleic Acids Res" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18996892> <http://purl.org/dc/terms/title> "INTERFEROME: the database of interferon regulated genes." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18996892> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11111050> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1016/s0378-1119(00)00416-9> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11111050> <http://purl.org/dc/terms/date> "2000"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11111050> <http://purl.org/dc/terms/creator> "Yokoyama K, Makino K, Kubota Y, Watanabe M, Kimura S, Yutsudo CH, Kurokawa K, Ishii K, Hattori M, Tatsuno I, Abe H, Yoh M, Iida T, Ohnishi M, Hayashi T, Yasunaga T, Honda T, Sasakawa C, Shinagawa H" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11111050> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Gene" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11111050> <http://purl.org/dc/terms/title> "Complete nucleotide sequence of the prophage VT1-Sakai carrying the Shiga toxin 1 genes of the enterohemorrhagic Escherichia coli O157:H7 strain derived from the Sakai outbreak." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11111050> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/22053089> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/nar/gkr845> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/22053089> <http://purl.org/dc/terms/date> "2012"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/22053089> <http://purl.org/dc/terms/creator> "Faure G, Andreani J, Guerois R" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/22053089> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Nucleic Acids Res" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/22053089> <http://purl.org/dc/terms/title> "InterEvol database: exploring the structure and evolution of protein complex interfaces." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/22053089> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381849> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/nar/gkj069> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381849> <http://purl.org/dc/terms/date> "2006"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381849> <http://purl.org/dc/terms/creator> "Fink JL, Aturaliya RN, Davis MJ, Zhang F, Hanson K, Teasdale MS, Kai C, Kawai J, Carninci P, Hayashizaki Y, Teasdale RD" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381849> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Nucleic Acids Res" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381849> <http://purl.org/dc/terms/title> "LOCATE: a mouse protein subcellular localization database." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381849> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608246> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/nar/gki044> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608246> <http://purl.org/dc/terms/date> "2005"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608246> <http://purl.org/dc/terms/creator> "Penzkofer T, Dandekar T, Zemojtel T" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608246> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Nucleic Acids Res" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608246> <http://purl.org/dc/terms/title> "L1Base: from functional annotation to prediction of active LINE-1 elements." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608246> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18434251> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1016/j.compbiolchem.2008.03.002> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18434251> <http://purl.org/dc/terms/date> "2008"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18434251> <http://purl.org/dc/terms/creator> "Ou YY, Gromiha MM, Chen SA, Suwa M" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18434251> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Comput Biol Chem" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18434251> <http://purl.org/dc/terms/title> "TMBETADISC-RBF: Discrimination of beta-barrel membrane proteins using RBF networks and PSSM profiles." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/18434251> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11375929> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/embo-reports/kve085> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11375929> <http://purl.org/dc/terms/date> "2001"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11375929> <http://purl.org/dc/terms/creator> "Suzuki Y, Taira H, Tsunoda T, Mizushima-Sugano J, Sese J, Hata H, Ota T, Isogai T, Tanaka T, Morishita S, Okubo K, Sakaki Y, Nakamura Y, Suyama A, Sugano S" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11375929> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "EMBO Rep" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11375929> <http://purl.org/dc/terms/title> "Diverse transcriptional initiation revealed by fine, large-scale mapping of mRNA start sites." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11375929> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12519987> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/nar/gkg076> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12519987> <http://purl.org/dc/terms/date> "2003"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12519987> <http://purl.org/dc/terms/creator> "Rhee SY, Beavis W, Berardini TZ, Chen G, Dixon D, Doyle A, Garcia-Hernandez M, Huala E, Lander G, Montoya M, Miller N, Mueller LA, Mundodi S, Reiser L, Tacklind J, Weems DC, Wu Y, Xu I, Yoo D, Yoon J, Zhang P" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12519987> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Nucleic Acids Res" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12519987> <http://purl.org/dc/terms/title> "The Arabidopsis Information Resource (TAIR): a model organism database providing a centralized, curated gateway to Arabidopsis biology, research materials and community." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12519987> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17932064> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/nar/gkm840> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17932064> <http://purl.org/dc/terms/date> "2008"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17932064> <http://purl.org/dc/terms/creator> "Obayashi T, Hayashi S, Shibaoka M, Saeki M, Ohta H, Kinoshita K" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17932064> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Nucleic Acids Res" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17932064> <http://purl.org/dc/terms/title> "COXPRESdb: a database of coexpressed gene networks in mammals." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17932064> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12176845> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/bioinformatics/18.8.1149> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12176845> <http://purl.org/dc/terms/date> "2002"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12176845> <http://purl.org/dc/terms/creator> "Zdobnov EM, Lopez R, Apweiler R, Etzold T" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12176845> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Bioinformatics" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12176845> <http://purl.org/dc/terms/title> "The EBI SRS server-new features." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12176845> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11752350> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/nar/30.1.405> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11752350> <http://purl.org/dc/terms/date> "2002"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11752350> <http://purl.org/dc/terms/creator> "Loss A, Bunsmann P, Bohne A, Loss A, Schwarzer E, Lang E, von der Lieth CW" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11752350> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Nucleic Acids Res" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11752350> <http://purl.org/dc/terms/title> "SWEET-DB: an attempt to create annotated data collections for carbohydrates." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11752350> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381836> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/nar/gkj002> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381836> <http://purl.org/dc/terms/date> "2006"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381836> <http://purl.org/dc/terms/creator> "Lestrade L, Weber MJ" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381836> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Nucleic Acids Res" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381836> <http://purl.org/dc/terms/title> "snoRNA-LBME-db, a comprehensive database of human H/ACA and C/D box snoRNAs." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/16381836> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608233> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/nar/gki092> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608233> <http://purl.org/dc/terms/date> "2005"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608233> <http://purl.org/dc/terms/creator> "Wang J, He X, Ruan J, Dai M, Chen J, Zhang Y, Hu Y, Ye C, Li S, Cong L, Fang L, Liu B, Li S, Wang J, Burt DW, Wong GK, Yu J, Yang H, Wang J" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608233> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Nucleic Acids Res" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608233> <http://purl.org/dc/terms/title> "ChickVD: a sequence variation database for the chicken genome." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/15608233> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17166862> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1093/nar/gkl848> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17166862> <http://purl.org/dc/terms/date> "2007"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17166862> <http://purl.org/dc/terms/creator> "Higasa K, Miyatake K, Kukita Y, Tahira T, Hayashi K" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17166862> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Nucleic Acids Res" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17166862> <http://purl.org/dc/terms/title> "D-HaploDB: a database of definitive haplotypes determined by genotyping complete hydatidiform mole samples." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/17166862> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11118137> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1126/science.290.5499.2105> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11118137> <http://purl.org/dc/terms/date> "2000"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11118137> <http://purl.org/dc/terms/creator> "Riechmann JL, Heard J, Martin G, Reuber L, Jiang C, Keddie J, Adam L, Pineda O, Ratcliffe OJ, Samaha RR, Creelman R, Pilgrim M, Broun P, Zhang JZ, Ghandehari D, Sherman BK, Yu G" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11118137> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Science" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11118137> <http://purl.org/dc/terms/title> "Arabidopsis transcription factors: genome-wide comparative analysis among eukaryotes." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/11118137> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/20047682> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1186/1471-2164-11-4> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/20047682> <http://purl.org/dc/terms/date> "2010"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/20047682> <http://purl.org/dc/terms/creator> "Borchardt T, Looso M, Bruckskotten M, Weis P, Kruse J, Braun T" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/20047682> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "BMC Genomics" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/20047682> <http://purl.org/dc/terms/title> "Analysis of newly established EST databases reveals similarities between heart regeneration in newt and fish." .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/20047682> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/ontology/bibo/Article> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12177482> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <http://doi.org/10.1104/pp.002774> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12177482> <http://purl.org/dc/terms/date> "2002"^^<http://www.w3.org/2001/XMLSchema#gYear> .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12177482> <http://purl.org/dc/terms/creator> "Ito T, Motohashi R, Kuromori T, Mizukado S, Sakurai T, Kanahara H, Seki M, Shinozaki K" .
+<http://rdf.ncbi.nlm.nih.gov/pubmed/12177482> <http://prismstandard.org/namespaces/1.2/basic/publicationName> "Plant Physiol" .
