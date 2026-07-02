@@ -91,6 +91,15 @@
   .line:nth-child(3).ink-in{animation-delay:.36s}
   @keyframes inkIn{from{opacity:0; filter:blur(3px)} to{opacity:1; filter:none}}
 
+  /* エンドポイント：ラベルをそのまま三行に流すモード（5-7-5に固定しない） */
+  .verse.raw{align-items:center; overflow:hidden}
+  .verse.raw .line{white-space:normal; max-height:94%; font-size:clamp(16px,2.6vw,25px); letter-spacing:.03em}
+
+  /* シート内の小ボタン */
+  .mini{font-size:.66rem; padding:.18rem .5rem; margin-left:.4rem; border:1px solid #00000030;
+    border-radius:2px; background:#f3ecda; cursor:pointer; letter-spacing:.04em; font-family:"Shippori Mincho",serif}
+  .mini:hover{background:#fbf5e6}
+
   /* tap-to-read: swap cursive → mincho */
   .panel.reveal .line{font-family:"Shippori Mincho",serif; letter-spacing:.02em; color:#241f16; text-shadow:none}
   .panel .reveal-hint{
@@ -139,6 +148,30 @@
   }
   #toast.show{opacity:.95; transform:translateX(-50%)}
 
+  /* ── SPARQL sheet ── */
+  .sheet{position:fixed; inset:0; z-index:30; display:flex; align-items:center; justify-content:center;
+    background:rgba(23,20,15,.38); backdrop-filter:blur(3px); padding:1rem; animation:fade .2s ease both}
+  .sheet[hidden]{display:none}
+  @keyframes fade{from{opacity:0} to{opacity:1}}
+  .sheet-card{width:min(560px,95vw); max-height:90vh; overflow:auto;
+    background:linear-gradient(#efe7d3,#e6dcc4); border:1px solid #00000030; border-radius:4px;
+    box-shadow:0 24px 70px rgba(0,0,0,.35); padding:1.1rem 1.25rem 1.35rem}
+  .sheet-head{display:flex; align-items:baseline; gap:1rem; margin-bottom:.2rem}
+  .sheet-head h2{font-family:"Yuji Syuku",serif; font-weight:400; letter-spacing:.16em; font-size:1.2rem; margin:0}
+  .sheet-head .x{margin-left:auto; padding:.3rem .7rem; font-size:.76rem}
+  .fld{display:block; font-size:.78rem; color:var(--tan-boku); letter-spacing:.06em; margin:.8rem 0 0}
+  .fld .note{display:block; font-size:.66rem; opacity:.85; margin-top:.2rem; line-height:1.6}
+  .fld .note code{font-family:ui-monospace,Menlo,Consolas,monospace; background:#00000010; padding:0 .25em; border-radius:2px}
+  .fld input, .fld textarea, .fld select{width:100%; margin-top:.35rem; color:var(--sumi);
+    background:#fbf5e6; border:1px solid #00000030; border-radius:3px; padding:.5rem .6rem}
+  .fld input, .fld select{font-family:"Shippori Mincho",serif; font-size:.9rem}
+  .fld textarea{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.82rem; line-height:1.55; resize:vertical; white-space:pre; tab-size:2}
+  .fld input:focus, .fld textarea:focus, .fld select:focus{outline:2px solid var(--shu); outline-offset:1px}
+  .fld.inline{display:flex; align-items:center; gap:.5rem; margin:0}
+  .fld.inline select{width:auto; margin:0}
+  .sheet-row{display:flex; align-items:center; gap:.6rem; margin-top:.7rem}
+  .sheet .hint{font-size:.68rem; color:var(--tan-boku); line-height:1.75; margin:.85rem 0 0}
+
   @media (max-width:560px){
     header .sub{display:none}
     .panel{width:64vw}
@@ -170,9 +203,39 @@
     <label class="file" tabindex="0">ファイルを選ぶ
       <input type="file" id="file" accept=".nt,.ttl,.n3,.txt,text/plain">
     </label>
+    <button id="sparqlBtn">エンドポイント</button>
     <button id="reset">お手本にもどす</button>
     <span class="grow"></span>
     <span class="speed">間　<input type="range" id="speed" min="1600" max="9000" value="4200" step="200"></span>
+  </div>
+</div>
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-modal="true" aria-label="SPARQLエンドポイントの設定">
+    <div class="sheet-head">
+      <h2>エンドポイントから詠む</h2>
+      <button class="x" id="sheetClose">とじる</button>
+    </div>
+    <label class="fld">エンドポイント URL
+      <input id="ep" type="url" spellcheck="false" placeholder="https://dbpedia.org/sparql" value="https://dbpedia.org/sparql">
+    </label>
+    <label class="fld inline" style="justify-content:flex-start; margin-top:.8rem">句の作り方
+      <select id="mode">
+        <option value="raw">ラベルをそのまま三行に</option>
+        <option value="compose">五七五に詠む（AI・季と絵つき）</option>
+      </select>
+    </label>
+    <label class="fld">クエリ
+      <span class="note">SELECT で ?s ?p ?o を返します。<code>{{OFFSET}}</code> は毎回ランダムな整数、<code>{{RAND}}</code> は乱数に置換。<button type="button" id="qExample" class="mini">この形式のクエリ例を入れる</button></span>
+      <textarea id="q" rows="9" spellcheck="false"></textarea>
+    </label>
+    <div class="sheet-row">
+      <label class="fld inline">送信
+        <select id="method"><option>GET</option><option>POST</option></select>
+      </label>
+      <span class="grow"></span>
+      <button class="primary" id="sparqlGo">この設定で詠みはじめる</button>
+    </div>
+    <p class="hint">CORS を許可したエンドポイントが必要です（DBpedia・Wikidata・UniProt など）。「ラベルをそのまま三行に」は rdfs:label（日本語）を取り出し、?s ?p ?o をそのまま句にします。「五七五に詠む」はトリプルを題に AI が作句します（通信不可時は簡易生成）。どちらも OFFSET を10通り変えて約100件を先読みし、述語の保持数を抑えつつ直近の述語を避けて選ぶので、rdf:type のような多数派が鈴なりになりません。</p>
   </div>
 </div>
 <div id="toast"></div>
@@ -236,36 +299,47 @@ function humanize(s){
   return String(s).replace(/([a-z0-9])([A-Z])/g,'$1 $2').replace(/[_\-]+/g,' ').trim();
 }
 
-/* ---------- モチーフ推定（オフライン生成・季節ヒント用） ---------- */
+/* ---------- モチーフ推定（墨絵の主題・季のヒント） ---------- */
 const MOTIF_MAP = [
-  [/mountain|peak|嶽|岳|山|yufu|fuji/i,        {motif:'mountain', word:'山',   season:'無'}],
-  [/river|stream|creek|渓|河|川/i,             {motif:'river',    word:'川',   season:'無'}],
-  [/sea|ocean|洋|海/i,                         {motif:'sea',      word:'海',   season:'夏'}],
-  [/wave|波|surf/i,                            {motif:'wave',     word:'波',   season:'無'}],
-  [/moon|月|luna/i,                            {motif:'moon',     word:'月',   season:'秋'}],
-  [/sun|陽|日輪|太陽|dawn|sunrise/i,           {motif:'sun',      word:'日',   season:'無'}],
-  [/mist|fog|霞|靄|霧/i,                        {motif:'mist',     word:'霧',   season:'春'}],
-  [/cloud|雲/i,                                {motif:'cloud',    word:'雲',   season:'無'}],
-  [/rain|雨|梅雨/i,                            {motif:'rain',     word:'雨',   season:'夏'}],
-  [/snow|雪/i,                                 {motif:'snow',     word:'雪',   season:'冬'}],
-  [/crane|鶴/i,                                {motif:'crane',    word:'鶴',   season:'無'}],
-  [/bird|鳥|swallow|燕|雁|goose/i,             {motif:'bird',     word:'鳥',   season:'無'}],
-  [/fish|魚|salmon|鮎|ayu|carp|鯉/i,           {motif:'fish',     word:'魚',   season:'夏'}],
-  [/bamboo|竹/i,                               {motif:'bamboo',   word:'竹',   season:'無'}],
-  [/pine|松/i,                                 {motif:'pine',     word:'松',   season:'冬'}],
-  [/plum|梅/i,                                 {motif:'plum',     word:'梅',   season:'春'}],
-  [/cherry|桜|sakura|blossom|flower|花/i,      {motif:'cherry',   word:'花',   season:'春'}],
-  [/maple|楓|momiji|紅葉/i,                    {motif:'maple',    word:'葉',   season:'秋'}],
-  [/lotus|蓮|hasu/i,                           {motif:'lotus',    word:'蓮',   season:'夏'}],
-  [/grass|reed|草|葦|芒|薄/i,                  {motif:'grass',    word:'草',   season:'秋'}],
-  [/star|星|vega|altair|織女|牽牛/i,           {motif:'star',     word:'星',   season:'秋'}],
-  [/gene|protein|dna|rna|cell|tumor|genome|p53|uniprot|taxonom/i, {motif:'enso', word:'生', season:'無'}],
-  [/wind|風/i,                                 {motif:'grass',    word:'風',   season:'無'}],
+  [/mountain|peak|嶽|岳|山|峰|嶺|谷|fuji/i,        {motif:'mountain', word:'山', season:'無'}],
+  [/river|stream|creek|渓|河|川|滝|湖|池|泉|沼/i,   {motif:'river',    word:'水', season:'無'}],
+  [/\bsea\b|ocean|洋|海|島|浦|磯|渚/i,             {motif:'sea',      word:'海', season:'夏'}],
+  [/wave|波|surf|潮/i,                             {motif:'wave',     word:'波', season:'無'}],
+  [/moon|月|luna|夜|宵/i,                          {motif:'moon',     word:'月', season:'秋'}],
+  [/sun|陽|日輪|太陽|dawn|sunrise|朝|暁|曙/i,       {motif:'sun',      word:'日', season:'無'}],
+  [/mist|fog|霞|靄|霧/i,                            {motif:'mist',     word:'霞', season:'春'}],
+  [/cloud|雲|空|天/i,                              {motif:'cloud',    word:'雲', season:'無'}],
+  [/rain|雨|梅雨|雷|稲妻|嵐/i,                      {motif:'rain',     word:'雨', season:'夏'}],
+  [/snow|雪|氷|霜/i,                               {motif:'snow',     word:'雪', season:'冬'}],
+  [/crane|鶴/i,                                    {motif:'crane',    word:'鶴', season:'無'}],
+  [/bird|鳥|swallow|燕|雁|goose|鷺|鴉|烏|鷹/i,     {motif:'bird',     word:'鳥', season:'無'}],
+  [/fish|魚|salmon|鮎|ayu|carp|鯉|鮪|鰻|蟹/i,      {motif:'fish',     word:'魚', season:'夏'}],
+  [/bamboo|竹|笹/i,                                {motif:'bamboo',   word:'竹', season:'無'}],
+  [/pine|松|杉|檜|森|林|木|樹|杜/i,                {motif:'pine',     word:'木', season:'冬'}],
+  [/plum|梅/i,                                     {motif:'plum',     word:'梅', season:'春'}],
+  [/cherry|桜|sakura|blossom|flower|花|牡丹|菊/i,  {motif:'cherry',   word:'花', season:'春'}],
+  [/maple|楓|momiji|紅葉|銀杏/i,                   {motif:'maple',    word:'葉', season:'秋'}],
+  [/lotus|蓮|hasu|睡蓮/i,                          {motif:'lotus',    word:'蓮', season:'夏'}],
+  [/grass|reed|草|葦|芒|薄|野|原|蝶|蛍|虫/i,       {motif:'grass',    word:'野', season:'秋'}],
+  [/star|星|vega|altair|織女|牽牛|銀河|天の川/i,   {motif:'star',     word:'星', season:'秋'}],
+  [/wind|風/i,                                     {motif:'grass',    word:'風', season:'無'}],
+  [/gene|protein|dna|rna|cell|tumor|genome|uniprot|taxonom|生命|細胞|遺伝/i, {motif:'enso', word:'生', season:'無'}],
 ];
+/* どれにも当たらないときは、内容ハッシュで“地味だが毎回変わる”主題を選ぶ（enso固定を避ける） */
+const NEUTRAL = [
+  {motif:'enso',    word:'空', season:'無'}, {motif:'mist',  word:'霞', season:'春'},
+  {motif:'cloud',   word:'雲', season:'無'}, {motif:'mountain', word:'山', season:'無'},
+  {motif:'river',   word:'水', season:'無'}, {motif:'grass', word:'野', season:'秋'},
+  {motif:'wave',    word:'波', season:'無'}, {motif:'star',  word:'星', season:'秋'},
+  {motif:'moon',    word:'月', season:'秋'}, {motif:'pine',  word:'木', season:'冬'},
+];
+function motifFromText(text){
+  const t = String(text || '');
+  for (const [re, m] of MOTIF_MAP) if (re.test(t)) return m;
+  return NEUTRAL[hashStr(t) % NEUTRAL.length];
+}
 function guessMotif(triple){
-  const hay = [triple.s.label, humanize(triple.p.label), triple.o.label, triple.s.value, triple.o.value].join(' ');
-  for (const [re, m] of MOTIF_MAP) if (re.test(hay)) return m;
-  return {motif:'enso', word:'空', season:'無'};
+  return motifFromText([triple.s.label, humanize(triple.p.label), triple.o.label, triple.s.value, triple.o.value].join(' '));
 }
 
 /* ---------- 乱数（内容シード） ---------- */
@@ -375,6 +449,14 @@ function composeLocal(triple, sLabel, pLabel, oLabel){
   const naka  = pick(BANK.naka7[g.motif] || BANK.naka7["enso"]);
   const shimo = pick(BANK.shimo5[season] || BANK.shimo5["無"]);
   return { kami, naka, shimo, yomi:"", motif:g.motif, elements:[], season, seal:g.word };
+}
+
+/* ---------- エンドポイント：ラベルをそのまま三行に（五七五に固定しない） ---------- */
+function clipLabel(t){ t = String(t||'').replace(/\s+/g,' ').trim(); return t.length > 30 ? t.slice(0,29)+'…' : t; }
+function rawVerse(triple){
+  const s = clipLabel(triple.s.label), p = clipLabel(triple.p.label), o = clipLabel(triple.o.label);
+  const g = motifFromText(s + ' ' + p + ' ' + o);
+  return { kami:s, naka:p, shimo:o, yomi:'', motif:g.motif, elements:[], season:g.season, seal:g.word, raw:true };
 }
 
 /* ============================================================
@@ -581,7 +663,7 @@ function addPanel(triple, verse){
   const art = document.createElement('div'); art.className='art';
   const cv = document.createElement('canvas'); art.appendChild(cv);
 
-  const verseEl = document.createElement('div'); verseEl.className='verse';
+  const verseEl = document.createElement('div'); verseEl.className = 'verse' + (verse.raw ? ' raw' : '');
   [verse.kami, verse.naka, verse.shimo].forEach(t=>{
     const ln = document.createElement('div'); ln.className='line ink-in'; ln.textContent=t; verseEl.appendChild(ln);
   });
@@ -589,12 +671,15 @@ function addPanel(triple, verse){
 
   const hint = document.createElement('div'); hint.className='reveal-hint'; hint.textContent='なぞって読み下す';
 
-  const foot = document.createElement('div'); foot.className='foot';
-  const sTxt = triple.s.type==='literal' ? '“'+triple.s.label+'”' : triple.s.label;
-  const oTxt = triple.o.type==='literal' ? '“'+triple.o.label+'”' : triple.o.label;
-  foot.innerHTML = `<b>${esc(sTxt)}</b> ・ ${esc(humanize(triple.p.label))} ・ <b>${esc(oTxt)}</b>`;
+  panel.append(art, verseEl, hint);
 
-  panel.append(art, verseEl, hint, foot);
+  if(!verse.raw){                          // 素のトリプルを詠んだ時だけ、出典を足元に囁く
+    const foot = document.createElement('div'); foot.className='foot';
+    const sTxt = triple.s.type==='literal' ? '“'+triple.s.label+'”' : triple.s.label;
+    const oTxt = triple.o.type==='literal' ? '“'+triple.o.label+'”' : triple.o.label;
+    foot.innerHTML = `<b>${esc(sTxt)}</b> ・ ${esc(humanize(triple.p.label))} ・ <b>${esc(oTxt)}</b>`;
+    panel.append(foot);
+  }
   stage.insertBefore(panel, stage.firstChild);   // 最新句は左端（縦書きの行と同じく右→左へ）
 
   // canvas はレイアウト確定後に描く
@@ -612,11 +697,168 @@ function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','
 function kanjiNum(n){ const d='〇一二三四五六七八九'; if(n<10) return d[n]; if(n<100){const t=Math.floor(n/10),o=n%10; return (t>1?d[t]:'')+'十'+(o?d[o]:'');} return String(n); }
 
 /* ============================================================
+   句の源（source）— 静的（ファイル/お手本）と SPARQL の二種
+   どちらも next() で一句分の三つ組を返す
+   ============================================================ */
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+
+/* 静的な三つ組の源：巡回しつつ、一巡ごとに並べ替える */
+function makeStaticSource(list){
+  let order = shuffle([...list.keys()]); let i = 0;
+  return {
+    kind:'static', total:list.length,
+    async next(){
+      if(!list.length) return null;
+      if(i >= order.length){ order = shuffle([...list.keys()]); i = 0; }
+      return list[order[i++]];
+    }
+  };
+}
+
+/* 並列度を抑えて map（エンドポイントを叩き過ぎない） */
+async function mapPool(items, limit, fn){
+  const out = []; let i = 0;
+  const worker = async ()=>{ while(i < items.length){ const k = i++; out[k] = await fn(items[k]).then(v=>({ok:true,v}), e=>({ok:false,e})); } };
+  await Promise.all(Array.from({length:Math.min(limit, items.length||1)}, worker));
+  return out;
+}
+
+/* SPARQL の源：OFFSET を変えて複数回引き、約100件を先読みキャッシュ。
+   述語(?p)の偏り（rdf:type 等）を、取り込み時のキャップと LRU 選択でならす。 */
+const SPARQL_MAX_OFFSET    = 20000; // ランダム OFFSET の上限（簡便法）
+const SPARQL_BATCH_QUERIES = 10;    // 一度のキャッシュで投げるクエリ数（×LIMIT ≒ 取得件数）
+const SPARQL_POOL          = 5;     // 同時接続数
+const SPARQL_PRED_CAP      = 5;     // バッファ内で同一述語を保持する上限
+const SPARQL_RECENT_K      = 8;     // 直近この数の述語は続けて選ばない
+function makeSparqlSource(endpoint, queryTpl, method){
+  const REFILL_AT   = 20;           // 残数がこれ以下で補充
+  const DIVERSITY_AT = 5;           // 述語の種類がこれ未満でも補充
+  let buffer  = [];
+  let fetching = null;
+  let lastErr  = null;
+
+  let tick = 0;
+  const lastSeen = new Map();       // 述語 → 最後に詠んだ tick
+  const recent = [];                // 直近に詠んだ述語（最大 RECENT_K）
+
+  const applyTpl = (off)=> queryTpl
+      .replace(/\{\{\s*OFFSET\s*\}\}/gi, String(off))
+      .replace(/\{\{\s*RAND\s*\}\}/gi, Math.random().toFixed(6));
+  const keyOf = t => t.s.value + '\u0001' + t.p.value + '\u0001' + t.o.value;
+  const distinctPreds = ()=> new Set(buffer.map(t=>t.p.value)).size;
+
+  function absorb(rows){                       // 重複を除き、述語ごとに CAP 件まで取り込む
+    const cnt = new Map(); const seen = new Set();
+    for(const t of buffer){ cnt.set(t.p.value,(cnt.get(t.p.value)||0)+1); seen.add(keyOf(t)); }
+    for(const t of shuffle(rows.slice())){     // 混ぜてから入れる → CAP 内が代表的になる
+      const k = keyOf(t); if(seen.has(k)) continue;
+      const c = cnt.get(t.p.value)||0; if(c >= SPARQL_PRED_CAP) continue;
+      buffer.push(t); seen.add(k); cnt.set(t.p.value, c+1);
+    }
+    buffer = shuffle(buffer);
+  }
+
+  async function fill(){
+    const offs = new Set();                    // 相異なる OFFSET を BATCH_QUERIES 個
+    while(offs.size < SPARQL_BATCH_QUERIES) offs.add(Math.floor(Math.random() * (SPARQL_MAX_OFFSET + 1)));
+    const settled = await mapPool([...offs], SPARQL_POOL, off => runSparql(endpoint, applyTpl(off), method));
+    const ok = settled.filter(r => r.ok);
+    if(ok.length === 0){                        // 全滅＝接続不可など。offset 0 で理由を表面化させる
+      absorb(await runSparql(endpoint, applyTpl(0), method));
+      return;
+    }
+    let rows = [];
+    for(const r of ok) rows = rows.concat(r.v);
+    if(rows.length === 0) rows = await runSparql(endpoint, applyTpl(0), method); // 全部空＝小規模DB。先頭を取る
+    absorb(rows);
+  }
+
+  function pick(){                              // 直近K種の述語を避け、最も久しく出していない述語を優先
+    if(buffer.length === 0) return null;
+    let cand = buffer.filter(t => !recent.includes(t.p.value));
+    if(cand.length === 0) cand = buffer.slice();
+    let best = null, bestScore = Infinity;
+    for(const t of shuffle(cand)){              // 同点は乱択
+      const s = lastSeen.has(t.p.value) ? lastSeen.get(t.p.value) : -1;  // 未出の述語(-1)を最優先
+      if(s < bestScore){ bestScore = s; best = t; }
+    }
+    buffer.splice(buffer.indexOf(best), 1);
+    tick++; lastSeen.set(best.p.value, tick);
+    recent.push(best.p.value); if(recent.length > SPARQL_RECENT_K) recent.shift();
+    return best;
+  }
+
+  return {
+    kind:'sparql', endpoint,
+    async prime(){ await fill(); return buffer.length; },   // 初回：接続確認を兼ね、約100件を仕込む
+    async next(){
+      if((buffer.length <= REFILL_AT || distinctPreds() < DIVERSITY_AT) && !fetching){
+        fetching = fill().catch(e=>{ lastErr = e; }).finally(()=>{ fetching = null; });
+      }
+      if(buffer.length === 0){
+        if(fetching) await fetching;
+        if(buffer.length === 0){
+          if(lastErr){ const e = lastErr; lastErr = null; throw e; }
+          return null;
+        }
+      }
+      return pick();
+    }
+  };
+}
+
+/* SPARQL プロトコル呼び出し → 内部の三つ組へ */
+async function runSparql(endpoint, query, method){
+  let res;
+  try{
+    if(method === 'POST'){
+      res = await fetch(endpoint, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/x-www-form-urlencoded', 'Accept':'application/sparql-results+json' },
+        body:'query=' + encodeURIComponent(query)
+      });
+    }else{
+      const url = endpoint + (endpoint.includes('?') ? '&' : '?') + 'query=' + encodeURIComponent(query);
+      res = await fetch(url, { headers:{ 'Accept':'application/sparql-results+json' } });
+    }
+  }catch(e){ throw new Error('__NETWORK__'); }         // CORS / ネットワーク
+
+  if(!res.ok){
+    const txt = await res.text().catch(()=> '');
+    throw new Error('HTTP ' + res.status + (txt ? '：' + txt.replace(/\s+/g,' ').slice(0,120) : ''));
+  }
+  let data;
+  try{ data = await res.json(); }
+  catch(_){ throw new Error('結果を JSON で解釈できません（Accept／format の指定をご確認ください）'); }
+  return sparqlToTriples(data);
+}
+function sparqlToTriples(data){
+  const vars = (data.head && data.head.vars) || [];
+  const names = (vars.includes('s') && vars.includes('p') && vars.includes('o')) ? ['s','p','o'] : vars.slice(0,3);
+  const binds = (data.results && data.results.bindings) || [];
+  const out = [];
+  for(const b of binds){
+    const S=b[names[0]], P=b[names[1]], O=b[names[2]];
+    if(!S || !P || !O) continue;
+    out.push({ s:bindTerm(S), p:bindTerm(P), o:bindTerm(O) });
+  }
+  return out;
+}
+function bindTerm(b){
+  if(b.type === 'uri')   return { type:'iri',     value:b.value, label:localName(b.value) };
+  if(b.type === 'bnode') return { type:'bnode',   value:b.value, label:'（無名）' };
+  return { type:'literal', value:b.value, label:b.value };   // literal / typed-literal
+}
+function sparqlErrMsg(e){
+  const m = String((e && e.message) || e);
+  if(m === '__NETWORK__') return '接続できません。CORS 未許可か URL 誤りの可能性があります';
+  return 'エラー：' + m.slice(0,140);
+}
+
+/* ============================================================
    連歌の進行
    ============================================================ */
-let triples = [];
-let order = [];
-let cursor = 0;
+let source = null;
 let prevVerse = null;
 let playing = false;
 let timer = null;
@@ -626,55 +868,136 @@ let busy = false;
 const playBtn = document.getElementById('play');
 const stepBtn = document.getElementById('step');
 
+function clearBoard(){
+  [...stage.children].forEach(c=>{ if(c!==emptyEl) c.remove(); });
+  verseCount = 0; countEl.textContent = '〇句';
+}
+
+/* ファイル／お手本を静的な源として据える */
 function loadText(text){
   const parsed = parseNT(text);
-  if (!parsed.length){ toast('三つ組が読み取れませんでした（n-triples 形式）'); return false; }
+  if(!parsed.length){ toast('三つ組が読み取れませんでした（n-triples 形式）'); return false; }
   stop();
-  triples = parsed;
-  order = shuffle([...triples.keys()]);
-  cursor = 0; prevVerse = null;
-  // 盤面をまっさらに
-  [...stage.children].forEach(c=>{ if(c!==emptyEl) c.remove(); });
-  verseCount = 0; countEl.textContent='〇句';
-  toast(`${kanjiNum(triples.length)}の三つ組を巻物に`);
+  source = makeStaticSource(parsed);
+  prevVerse = null; clearBoard();
+  toast(`${kanjiNum(parsed.length)}の三つ組を巻物に`);
   return true;
 }
-function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 
 async function composeNext(){
-  if (busy || !triples.length) return;
+  if(busy || !source) return;
   busy = true;
-  if (cursor >= order.length){ order = shuffle([...triples.keys()]); cursor = 0; }  // 一巡したら詠み直す
-  const triple = triples[order[cursor++]];
   try{
-    const verse = await compose(triple, prevVerse);
-    addPanel(triple, verse);
-    prevVerse = verse;
+    const triple = await source.next();
+    if(!triple){ toast('三つ組が尽きました'); stop(); return; }
+    let verse;
+    if(source.mode === 'raw'){                 // ラベルをそのまま三行に
+      verse = rawVerse(triple);
+    }else{                                     // 五七五に詠む（AI、失敗時はローカル）
+      try{ verse = await compose(triple, prevVerse); }
+      catch(_){ verse = composeLocal(triple, triple.s.label, humanize(triple.p.label), triple.o.label); }
+    }
+    addPanel(triple, verse); prevVerse = verse;
   }catch(e){
-    // 最後の砦：ローカル
-    const v = composeLocal(triple, triple.s.label, humanize(triple.p.label), triple.o.label);
-    addPanel(triple, v); prevVerse = v;
+    toast(sparqlErrMsg(e)); stop();          // 源そのものが尽きた／接続断
   }finally{
     busy = false;
   }
 }
 
 function play(){
-  if (!triples.length){ toast('先にファイルか、お手本を選んでください'); return; }
-  playing = true; playBtn.textContent='ひと休み'; playBtn.classList.remove('primary');
+  if(!source){ toast('先にファイル・お手本・エンドポイントのいずれかを選んでください'); return; }
+  playing = true; playBtn.textContent = 'ひと休み'; playBtn.classList.remove('primary');
   const loop = async ()=>{
-    if (!playing) return;
+    if(!playing) return;
     await composeNext();
-    if (!playing) return;
+    if(!playing) return;
     timer = setTimeout(loop, intervalMs);
   };
   loop();
 }
 function stop(){ playing=false; clearTimeout(timer); playBtn.textContent='詠み始める'; playBtn.classList.add('primary'); }
 
+/* ---------- SPARQL シート ---------- */
+const sheet     = document.getElementById('sheet');
+const epInput   = document.getElementById('ep');
+const qInput    = document.getElementById('q');
+const methodSel = document.getElementById('method');
+
+const modeSel     = document.getElementById('mode');
+const qExampleBtn = document.getElementById('qExample');
+
+/* エンドポイント用クエリの雛形 */
+const Q_RAW =
+`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?s ?p ?o WHERE {
+  ?si ?pi ?oi .
+  ?si rdfs:label ?s .
+  ?pi rdfs:label ?p .
+  ?oi rdfs:label ?o .
+  FILTER (lang(?s) = "ja")
+  FILTER (lang(?p) = "ja" || lang(?p) = "en")
+  FILTER (lang(?o) = "ja")
+}
+LIMIT 10
+OFFSET {{OFFSET}}`;
+
+const Q_COMPOSE =
+`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT ?s ?p ?o WHERE {
+  ?s ?p ?o .
+  FILTER (?p != rdf:type)
+}
+LIMIT 10
+OFFSET {{OFFSET}}`;
+
+const presetFor = m => (m === 'raw' ? Q_RAW : Q_COMPOSE);
+qInput.value = presetFor(modeSel.value);       // 既定は「ラベルをそのまま三行に」
+
+modeSel.addEventListener('change', ()=>{        // 未編集の雛形なら、モードに合わせて差し替える
+  const cur = qInput.value.trim();
+  if(cur === '' || cur === Q_RAW.trim() || cur === Q_COMPOSE.trim()) qInput.value = presetFor(modeSel.value);
+});
+qExampleBtn.addEventListener('click', ()=>{ qInput.value = presetFor(modeSel.value); });
+
+function openSheet(){ sheet.hidden = false; setTimeout(()=> epInput.focus(), 30); }
+function closeSheet(){ sheet.hidden = true; }
+
+document.getElementById('sparqlBtn').addEventListener('click', openSheet);
+document.getElementById('sheetClose').addEventListener('click', closeSheet);
+sheet.addEventListener('click', e=>{ if(e.target === sheet) closeSheet(); });
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && !sheet.hidden) closeSheet(); });
+
+document.getElementById('sparqlGo').addEventListener('click', async ()=>{
+  const endpoint = epInput.value.trim();
+  const query    = qInput.value.trim();
+  const method   = methodSel.value;
+  const mode     = modeSel.value;
+  if(!endpoint){ toast('エンドポイントの URL を入れてください'); return; }
+  if(!/\?s\b/.test(query) || !/\?p\b/.test(query) || !/\?o\b/.test(query)){
+    toast('クエリの SELECT に ?s ?p ?o を含めてください'); return;
+  }
+  stop();
+  toast('エンドポイントに問い合わせています…');
+  const src = makeSparqlSource(endpoint, query, method);
+  src.mode = mode;
+  try{
+    const n = await src.prime();
+    if(!n){ toast('三つ組が返りませんでした（クエリを確認してください）'); return; }
+    source = src; prevVerse = null; clearBoard();
+    closeSheet();
+    const host = endpoint.replace(/^https?:\/\//,'').split('/')[0];
+    toast(`${host} から詠みます`);
+    play();
+  }catch(e){
+    toast(sparqlErrMsg(e));
+  }
+});
+
 /* ---------- 操作 ---------- */
 playBtn.addEventListener('click', ()=> playing ? stop() : play());
-stepBtn.addEventListener('click', async ()=>{ if(!triples.length){toast('先にファイルか、お手本を選んでください');return;} await composeNext(); });
+stepBtn.addEventListener('click', async ()=>{ if(!source){toast('先にファイル・お手本・エンドポイントのいずれかを選んでください');return;} await composeNext(); });
 document.getElementById('reset').addEventListener('click', ()=>{ if(loadText(SAMPLE)) play(); });
 document.getElementById('file').addEventListener('change', e=>{
   const f = e.target.files[0]; if(!f) return;
