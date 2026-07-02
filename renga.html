@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>連歌絵巻 ― RDFトリプルの俳諧</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Mai&family=Yuji+Syuku&family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* washi & sumi palette */
+    --washi:      #e6dcc4;   /* aged mulberry paper */
+    --washi-deep: #d6c9a8;   /* vignette / fold */
+    --sumi:       #17140f;   /* warm near-black ink */
+    --tan-boku:   #57503f;   /* diluted ink 淡墨 */
+    --shu:        #b23a2e;   /* seal vermilion 朱 */
+    --kin:        #8a7a4e;   /* faded gold */
+    --line:       rgba(23,20,15,.20);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--sumi);
+    font-family:"Shippori Mincho",serif;
+    background:
+      radial-gradient(120% 90% at 50% -10%, #efe7d3 0%, var(--washi) 45%, var(--washi-deep) 100%);
+    overflow:hidden;
+  }
+  /* faint washi fibre texture */
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; opacity:.5; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .wrap{position:fixed; inset:0; display:flex; flex-direction:column}
+
+  /* ── header ── */
+  header{
+    display:flex; align-items:baseline; gap:.9rem; flex-wrap:wrap;
+    padding:.7rem 1.1rem .55rem; border-bottom:1px solid var(--line);
+    background:linear-gradient(#efe7d3cc,#e6dcc4aa); backdrop-filter:blur(2px);
+    z-index:5;
+  }
+  header h1{
+    font-family:"Yuji Syuku",serif; font-weight:400; margin:0;
+    font-size:clamp(1.1rem,2.6vw,1.5rem); letter-spacing:.18em;
+  }
+  header .sub{font-size:.72rem; color:var(--tan-boku); letter-spacing:.12em}
+  header .count{margin-left:auto; font-size:.72rem; color:var(--tan-boku); letter-spacing:.1em}
+
+  /* ── stage: the emaki, unrolling right→left ── */
+  #stage{
+    flex:1; display:flex; flex-direction:row; align-items:stretch;
+    overflow-x:auto; overflow-y:hidden; scroll-behavior:smooth;
+    padding:0 clamp(6px,2vw,22px); gap:0;
+  }
+  #stage::-webkit-scrollbar{height:8px}
+  #stage::-webkit-scrollbar-thumb{background:#00000022; border-radius:4px}
+
+  .panel{
+    flex:0 0 auto; position:relative;
+    width:clamp(168px,20vw,232px); height:100%;
+    display:flex; flex-direction:column;
+    padding:.7rem .35rem 1.1rem;
+    border-left:1px solid var(--line);
+    animation:unfurl .9s ease both;
+  }
+  .panel:first-child{border-right:1px solid var(--line)}
+  @keyframes unfurl{from{opacity:0; transform:translateX(-14px) scaleX(.96)} to{opacity:1; transform:none}}
+
+  .art{width:100%; height:44%; min-height:120px; display:block}
+  .art canvas{width:100%; height:100%; display:block}
+
+  .verse{
+    flex:1; display:flex; flex-direction:row-reverse;   /* 上五 → 右端 */
+    justify-content:center; align-items:flex-start; gap:clamp(4px,1.4vw,12px);
+    padding-top:.55rem; cursor:pointer;
+  }
+  .line{
+    writing-mode:vertical-rl;
+    font-family:"Yuji Mai",serif;
+    font-size:clamp(20px,3.1vw,30px); line-height:1.16; letter-spacing:.05em;
+    color:var(--sumi); white-space:nowrap;
+    text-shadow:0 0 .6px rgba(23,20,15,.25);          /* faint bleed */
+    transition:opacity .5s, filter .5s;
+  }
+  .line.ink-in{animation:inkIn .8s ease both}
+  .line:nth-child(1).ink-in{animation-delay:0s}
+  .line:nth-child(2).ink-in{animation-delay:.18s}
+  .line:nth-child(3).ink-in{animation-delay:.36s}
+  @keyframes inkIn{from{opacity:0; filter:blur(3px)} to{opacity:1; filter:none}}
+
+  /* tap-to-read: swap cursive → mincho */
+  .panel.reveal .line{font-family:"Shippori Mincho",serif; letter-spacing:.02em; color:#241f16; text-shadow:none}
+  .panel .reveal-hint{
+    position:absolute; left:0; right:0; bottom:2.0rem; text-align:center;
+    font-size:.6rem; color:var(--tan-boku); opacity:0; transition:opacity .3s; letter-spacing:.08em;
+  }
+  .panel:hover .reveal-hint{opacity:.8}
+
+  /* source triple, whispered at the foot */
+  .foot{
+    position:absolute; left:.4rem; right:.4rem; bottom:.35rem;
+    font-size:.56rem; line-height:1.5; color:var(--tan-boku); opacity:.62;
+    text-align:center; letter-spacing:.02em; word-break:break-all;
+  }
+  .foot b{font-weight:600; color:#3d382b}
+
+  /* ── controls ── */
+  .bar{
+    display:flex; align-items:center; gap:.55rem; flex-wrap:wrap;
+    padding:.55rem 1.1rem; border-top:1px solid var(--line);
+    background:linear-gradient(#e6dcc4aa,#dccfae); z-index:5;
+  }
+  button, label.file{
+    font-family:"Shippori Mincho",serif; font-size:.82rem; letter-spacing:.06em;
+    padding:.42rem .9rem; border:1px solid #00000030; border-radius:2px;
+    background:#f3ecda; color:var(--sumi); cursor:pointer; transition:background .2s,transform .05s;
+  }
+  button:hover,label.file:hover{background:#fbf5e6}
+  button:active{transform:translateY(1px)}
+  button.primary{background:var(--sumi); color:#f1e9d6; border-color:var(--sumi)}
+  button.primary:hover{background:#2a251c}
+  button:focus-visible,label.file:focus-within{outline:2px solid var(--shu); outline-offset:2px}
+  .file input{display:none}
+  .bar .grow{flex:1}
+  .speed{display:flex; align-items:center; gap:.4rem; font-size:.74rem; color:var(--tan-boku)}
+  .speed input{accent-color:var(--shu)}
+
+  /* empty / toast */
+  .empty{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:2rem}
+  .empty p{max-width:34ch; color:var(--tan-boku); font-size:.95rem; line-height:1.9; letter-spacing:.04em}
+  .empty b{font-family:"Yuji Syuku",serif; font-weight:400; display:block; font-size:1.3rem; margin-bottom:.6rem; color:var(--sumi)}
+  #toast{
+    position:fixed; left:50%; bottom:4.6rem; transform:translateX(-50%) translateY(12px);
+    background:var(--sumi); color:#f1e9d6; font-size:.78rem; letter-spacing:.06em;
+    padding:.5rem .95rem; border-radius:3px; opacity:0; pointer-events:none; transition:.35s; z-index:20;
+  }
+  #toast.show{opacity:.95; transform:translateX(-50%)}
+
+  @media (max-width:560px){
+    header .sub{display:none}
+    .panel{width:64vw}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .panel,.line.ink-in{animation:none}
+    #stage{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>連歌絵巻</h1>
+    <span class="sub">RDFの三つ組を、上五・中七・下五に詠み継ぐ</span>
+    <span class="count" id="count">〇句</span>
+  </header>
+
+  <div id="stage" aria-label="連なる句の絵巻">
+    <div class="empty" id="empty">
+      <p><b>主語・述語・目的語を、句に</b>
+      「詠み始める」を押すと、読み込んだ n-triples が一句ずつ絵とともに立ち上がり、右から左へ連なります。句をなぞると読み下せます。</p>
+    </div>
+  </div>
+
+  <div class="bar">
+    <button class="primary" id="play">詠み始める</button>
+    <button id="step">一句詠む</button>
+    <label class="file" tabindex="0">ファイルを選ぶ
+      <input type="file" id="file" accept=".nt,.ttl,.n3,.txt,text/plain">
+    </label>
+    <button id="reset">お手本にもどす</button>
+    <span class="grow"></span>
+    <span class="speed">間　<input type="range" id="speed" min="1600" max="9000" value="4200" step="200"></span>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   連歌絵巻 — RDF n-triples → 五七五 → 墨絵つきの巻物
+   ============================================================ */
+
+const stage = document.getElementById('stage');
+const emptyEl = document.getElementById('empty');
+const countEl = document.getElementById('count');
+const toastEl = document.getElementById('toast');
+
+/* ---------- お手本の三つ組（自然＋いのちの小さな知識グラフ） ---------- */
+const SAMPLE = `
+<http://ex.org/mountain/Yufu> <http://ex.org/wearsAtDawn> <http://ex.org/mist/Morning> .
+<http://ex.org/moon/Autumn> <http://ex.org/reflectsIn> <http://ex.org/river/Clear> .
+<http://ex.org/crane/White> <http://ex.org/crossesOver> <http://ex.org/sea/Wide> .
+<http://ex.org/plum/Old> <http://ex.org/firstToBloom> <http://ex.org/season/Spring> .
+<http://ex.org/snow/Silent> <http://ex.org/buries> <http://ex.org/pine/Ancient> .
+<http://ex.org/rain/June> <http://ex.org/awakens> <http://ex.org/lotus/Pond> .
+<http://ex.org/maple/Crimson> <http://ex.org/driftsInto> <http://ex.org/river/Valley> .
+<http://ex.org/fish/Ayu> <http://ex.org/swimsAgainst> <http://ex.org/stream/Cold> .
+<http://ex.org/bamboo/Grove> <http://ex.org/bendsIn> <http://ex.org/wind/Evening> .
+<http://ex.org/star/Vega> <http://ex.org/meetsOnceAYear> <http://ex.org/star/Altair> .
+<http://purl.uniprot.org/uniprot/P04637> <http://purl.uniprot.org/core/recommendedName> "Tumor suppressor p53" .
+<http://ex.org/gene/TP53> <http://ex.org/quietlyGuards> <http://ex.org/cell/Genome> .
+`.trim();
+
+/* ---------- n-triples パーサ（簡易・堅牢寄り） ---------- */
+function parseNT(text){
+  const out = [];
+  const re = /^\s*(<[^>]*>|_:[^\s]+)\s+(<[^>]*>)\s+(<[^>]*>|_:[^\s]+|"(?:[^"\\]|\\.)*"(?:\^\^<[^>]*>|@[\w-]+)?)\s*\.\s*$/;
+  for (const raw of text.split('\n')){
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    const m = line.match(re);
+    if (!m) continue;
+    out.push({ s:parseTerm(m[1]), p:parseTerm(m[2]), o:parseTerm(m[3]) });
+  }
+  return out;
+}
+function parseTerm(t){
+  if (t.startsWith('<') && t.endsWith('>')){
+    const iri = t.slice(1,-1);
+    return { type:'iri', value:iri, label:localName(iri) };
+  }
+  if (t.startsWith('_:')) return { type:'bnode', value:t, label:'（無名）' };
+  // literal
+  const lm = t.match(/^"((?:[^"\\]|\\.)*)"/);
+  const val = lm ? lm[1].replace(/\\"/g,'"').replace(/\\n/g,' ').replace(/\\\\/g,'\\') : t;
+  return { type:'literal', value:val, label:val };
+}
+function localName(iri){
+  const clean = iri.replace(/[#/]+$/,'');
+  const i = Math.max(clean.lastIndexOf('#'), clean.lastIndexOf('/'));
+  return i>=0 ? clean.slice(i+1) : clean;
+}
+function humanize(s){
+  return String(s).replace(/([a-z0-9])([A-Z])/g,'$1 $2').replace(/[_\-]+/g,' ').trim();
+}
+
+/* ---------- モチーフ推定（オフライン生成・季節ヒント用） ---------- */
+const MOTIF_MAP = [
+  [/mountain|peak|嶽|岳|山|yufu|fuji/i,        {motif:'mountain', word:'山',   season:'無'}],
+  [/river|stream|creek|渓|河|川/i,             {motif:'river',    word:'川',   season:'無'}],
+  [/sea|ocean|洋|海/i,                         {motif:'sea',      word:'海',   season:'夏'}],
+  [/wave|波|surf/i,                            {motif:'wave',     word:'波',   season:'無'}],
+  [/moon|月|luna/i,                            {motif:'moon',     word:'月',   season:'秋'}],
+  [/sun|陽|日輪|太陽|dawn|sunrise/i,           {motif:'sun',      word:'日',   season:'無'}],
+  [/mist|fog|霞|靄|霧/i,                        {motif:'mist',     word:'霧',   season:'春'}],
+  [/cloud|雲/i,                                {motif:'cloud',    word:'雲',   season:'無'}],
+  [/rain|雨|梅雨/i,                            {motif:'rain',     word:'雨',   season:'夏'}],
+  [/snow|雪/i,                                 {motif:'snow',     word:'雪',   season:'冬'}],
+  [/crane|鶴/i,                                {motif:'crane',    word:'鶴',   season:'無'}],
+  [/bird|鳥|swallow|燕|雁|goose/i,             {motif:'bird',     word:'鳥',   season:'無'}],
+  [/fish|魚|salmon|鮎|ayu|carp|鯉/i,           {motif:'fish',     word:'魚',   season:'夏'}],
+  [/bamboo|竹/i,                               {motif:'bamboo',   word:'竹',   season:'無'}],
+  [/pine|松/i,                                 {motif:'pine',     word:'松',   season:'冬'}],
+  [/plum|梅/i,                                 {motif:'plum',     word:'梅',   season:'春'}],
+  [/cherry|桜|sakura|blossom|flower|花/i,      {motif:'cherry',   word:'花',   season:'春'}],
+  [/maple|楓|momiji|紅葉/i,                    {motif:'maple',    word:'葉',   season:'秋'}],
+  [/lotus|蓮|hasu/i,                           {motif:'lotus',    word:'蓮',   season:'夏'}],
+  [/grass|reed|草|葦|芒|薄/i,                  {motif:'grass',    word:'草',   season:'秋'}],
+  [/star|星|vega|altair|織女|牽牛/i,           {motif:'star',     word:'星',   season:'秋'}],
+  [/gene|protein|dna|rna|cell|tumor|genome|p53|uniprot|taxonom/i, {motif:'enso', word:'生', season:'無'}],
+  [/wind|風/i,                                 {motif:'grass',    word:'風',   season:'無'}],
+];
+function guessMotif(triple){
+  const hay = [triple.s.label, humanize(triple.p.label), triple.o.label, triple.s.value, triple.o.value].join(' ');
+  for (const [re, m] of MOTIF_MAP) if (re.test(hay)) return m;
+  return {motif:'enso', word:'空', season:'無'};
+}
+
+/* ---------- 乱数（内容シード） ---------- */
+function hashStr(s){ let h=2166136261; for(let i=0;i<s.length;i++){h^=s.charCodeAt(i); h=Math.imul(h,16777619);} return h>>>0; }
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* ---------- 句の生成：アプリ内 Claude（連歌の宗匠）＋ 墨だけの控え ---------- */
+let apiHealthy = true;         // 失敗が続けば false に
+let apiFailStreak = 0;
+
+async function compose(triple, prev){
+  const sLabel = triple.s.type==='literal' ? triple.s.value : humanize(triple.s.label);
+  const pLabel = humanize(triple.p.label);
+  const oLabel = triple.o.type==='literal' ? triple.o.value : humanize(triple.o.label);
+
+  if (apiHealthy){
+    try{
+      const v = await composeAPI(sLabel, pLabel, oLabel, prev);
+      apiFailStreak = 0;
+      return v;
+    }catch(e){
+      apiFailStreak++;
+      if (apiFailStreak >= 2){ apiHealthy = false; toast('墨だけで詠み継ぎます（通信なし）'); }
+    }
+  }
+  return composeLocal(triple, sLabel, pLabel, oLabel);
+}
+
+async function composeAPI(sLabel, pLabel, oLabel, prev){
+  const sys =
+`あなたは連歌の宗匠です。与えられたRDFトリプル（主語・述語・目的語）を題とし、五・七・五の句を一句詠みます。
+上五は主語の心を、中七は述語の働き・関係を、下五は目的語の心を映してください。学術的な語も、景物や情に転じて構いません。
+可能なら季語を一つ含めます。前句があれば、その景・情に付合（つけあい）しつつ新たに転じ、同じ語の反復は避けます。
+返答はJSONオブジェクトのみ。前置き・説明・コードフェンス禁止。
+形式:
+{"kami":"上五","naka":"中七","shimo":"下五","yomi":"かみ なか しも のかな読み","motif":"次から一つ mountain,river,sea,wave,moon,sun,cloud,mist,rain,snow,bird,crane,fish,bamboo,pine,plum,cherry,maple,grass,reed,lotus,star,enso","elements":["副次モチーフを0〜2個 同じ語彙から"],"season":"春|夏|秋|冬|無","seal":"落款にする漢字一字"}`;
+  let user = `主語: ${sLabel}\n述語: ${pLabel}\n目的語: ${oLabel}`;
+  if (prev) user += `\n\n前句（付合の相手）: ${prev.kami}　${prev.naka}　${prev.shimo}`;
+
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      model:"claude-sonnet-4-6",
+      max_tokens:1000,
+      system: sys,
+      messages:[{ role:"user", content:user }]
+    })
+  });
+  if(!res.ok) throw new Error("api "+res.status);
+  const data = await res.json();
+  const text = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
+  const clean = text.replace(/```json|```/g,"").trim();
+  const obj = JSON.parse(clean.slice(clean.indexOf("{"), clean.lastIndexOf("}")+1));
+  return normalizeVerse(obj);
+}
+
+function normalizeVerse(o){
+  const okMotifs = new Set(["mountain","river","sea","wave","moon","sun","cloud","mist","rain","snow","bird","crane","fish","bamboo","pine","plum","cherry","maple","grass","reed","lotus","star","enso"]);
+  return {
+    kami:  String(o.kami||"").slice(0,12),
+    naka:  String(o.naka||"").slice(0,14),
+    shimo: String(o.shimo||"").slice(0,12),
+    yomi:  String(o.yomi||""),
+    motif: okMotifs.has(o.motif) ? o.motif : "enso",
+    elements: Array.isArray(o.elements) ? o.elements.filter(e=>okMotifs.has(e)).slice(0,2) : [],
+    season: ["春","夏","秋","冬"].includes(o.season) ? o.season : "無",
+    seal:  (String(o.seal||"").match(/[\u3400-\u9fff]/)||["詠"])[0]
+  };
+}
+
+/* オフラインの控えめな詠み（語彙バンクから五七五を組む） */
+function composeLocal(triple, sLabel, pLabel, oLabel){
+  const g = guessMotif(triple);
+  const seed = hashStr(sLabel+pLabel+oLabel);
+  const rng = mulberry32(seed);
+  const pick = arr => arr[Math.floor(rng()*arr.length)];
+
+  const BANK = {
+    kami5: {
+      春:["春がすみ","梅ひらく","うすべにの","あさぼらけ"], 夏:["ゆふすずみ","みなも澄み","蓮の葉に","なつの風"],
+      秋:["あきの月","つゆふかし","くれなゐの","雁わたる"], 冬:["ゆきしづか","まつ古りて","こがらしや","しもの朝"],
+      無:["いにしへの","しづかなる","うつろひて","ひとすぢの"]
+    },
+    naka7: {
+      mountain:["嶺こえて雲うごくなり","朝霧を肩にかけつつ"], river:["せせらぎに影をながして","水の面をわたりゆく"],
+      sea:["沖つ波しろく寄せては","はてなき碧をたたへて"], moon:["ひかりを水にうつしけり","夜半にしづかに照らしけり"],
+      crane:["翼ひろげて越えゆくや","声を残して飛び立ちぬ"], bird:["ひと声のこし過ぎゆけり","梢にしばし羽をやすめ"],
+      fish:["流れに逆らひのぼる","淵に身をひるがへして"], plum:["まづ一輪をひらきけり","香を先がけに漂はせ"],
+      cherry:["花のしづくをこぼしつつ","風にまかせて散りにけり"], maple:["くれなゐ深く染まりゆく","水面に朱を流しけり"],
+      snow:["しづかに古木を埋めけり","音なく夜を白めゆく"], lotus:["雨に目ざめてひらきけり","泥より清くたちのぼる"],
+      bamboo:["風にしなひてそよぐなり","節ごとに月をやどして"], pine:["千代のみどりを保ちけり","雪をいただきなほ立てる"],
+      star:["年に一度をちぎりけり","天の河をば渡りゆく"], grass:["風にみだれてなびくなり","露をこぼして揺れにけり"],
+      enso:["いのちの環をたどりつつ","めぐる理をつなぎけり"], mist:["谷を静かに満たしけり","朝をやはらかく包みて"],
+      cloud:["峰にかかりて動かざる","日をやはらかく隠しつつ"], rain:["軒をたたきて夜もすがら","草木をふかく潤して"],
+      wave:["岩に砕けてまた返す","月をくだきてきらめきぬ"], sun:["雲間をわけて昇りけり","山の端あかく染めながら"],
+      reed:["水辺にそよぎ立ちにけり","風の道をば示しつつ"]
+    },
+    shimo5: {
+      春:["花の声","うぐひすや","春ふかし"], 夏:["せみしぐれ","夏のくれ","みづのおと"],
+      秋:["月のみち","露けさよ","秋ふかし"], 冬:["ゆきのはて","冬ざれや","しづけさよ"],
+      無:["けふもまた","かぎりなし","時ながる","名もしらず"]
+    }
+  };
+  const season = g.season;
+  const kami  = pick(BANK.kami5[season] || BANK.kami5["無"]);
+  const naka  = pick(BANK.naka7[g.motif] || BANK.naka7["enso"]);
+  const shimo = pick(BANK.shimo5[season] || BANK.shimo5["無"]);
+  return { kami, naka, shimo, yomi:"", motif:g.motif, elements:[], season, seal:g.word };
+}
+
+/* ============================================================
+   墨絵 — motif と季で描き分ける手続き画
+   ============================================================ */
+function drawSumi(canvas, spec){
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  const rect = canvas.getBoundingClientRect();
+  const W = Math.max(140, rect.width), H = Math.max(110, rect.height);
+  canvas.width = W*dpr; canvas.height = H*dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,W,H);
+
+  const rng = mulberry32(hashStr(spec.motif + spec.season + (spec.kami||'') + (spec.shimo||'')));
+  const INK = '#17140f', DIL = 'rgba(40,35,26,';
+
+  // うっすらとした地の霞
+  seasonTint(ctx,W,H,spec.season,rng);
+
+  const motifs = [spec.motif, ...(spec.elements||[])];
+  // まず地平・水など背景系
+  if (motifs.some(m=>['sea','river','wave','fish','lotus','reed'].includes(m))) waterBed(ctx,W,H,rng,DIL);
+
+  // 主モチーフを大きく、副次を小さく
+  motifs.forEach((m,i)=> drawMotif(ctx,W,H,m,i===0,rng,INK,DIL,spec.season));
+
+  seal(ctx,W,H,spec.seal||'詠');
+
+  // ヘルパ ------------------------------------------------------
+  function stroke(pts,w0,w1,alpha){
+    ctx.save(); ctx.strokeStyle=INK; ctx.globalAlpha=alpha; ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.shadowColor='rgba(23,20,15,.5)'; ctx.shadowBlur=1.2;
+    for(let i=0;i<pts.length-1;i++){
+      const t=i/(pts.length-1||1); ctx.lineWidth=w0+(w1-w0)*t;
+      ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y);
+      const mx=(pts[i].x+pts[i+1].x)/2, my=(pts[i].y+pts[i+1].y)/2;
+      ctx.quadraticCurveTo(pts[i].x,pts[i].y,mx,my); ctx.lineTo(pts[i+1].x,pts[i+1].y); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function wash(x,y,rx,ry,a){
+    ctx.save(); const g=ctx.createRadialGradient(x,y,0,x,y,Math.max(rx,ry));
+    g.addColorStop(0,DIL+a+')'); g.addColorStop(1,'rgba(40,35,26,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.ellipse(x,y,rx,ry,0,0,7); ctx.fill(); ctx.restore();
+  }
+  function seasonTint(ctx,W,H,s,rng){
+    const c = {春:'rgba(190,80,90,.06)',夏:'rgba(40,120,80,.06)',秋:'rgba(170,90,20,.07)',冬:'rgba(70,90,120,.06)'}[s];
+    if(!c) return;
+    ctx.save(); ctx.fillStyle=c; ctx.fillRect(0,0,W, H*0.5); ctx.restore();
+  }
+  function waterBed(ctx,W,H,rng,DIL){
+    const base=H*0.72;
+    for(let i=0;i<4;i++){
+      const y=base+i*8+rng()*4; const pts=[];
+      for(let x=6;x<=W-6;x+=14) pts.push({x, y:y+Math.sin((x+i*30)/22)*3});
+      stroke(pts,1.4,1.0,.32-i*0.05);
+    }
+  }
+  function drawMotif(ctx,W,H,m,primary,rng,INK,DIL,season){
+    const s = primary?1:0.5;
+    const cx = primary? W*(0.42+rng()*0.12) : W*(0.2+rng()*0.6);
+    switch(m){
+      case 'mountain': {
+        const baseY=H*0.7;
+        [[0.55,0.42,.16],[0.85,0.3,.24]].forEach(([wr,hr,a])=>{
+          const w=W*wr*s, top=baseY-H*hr*s, left=cx-w/2;
+          ctx.save(); ctx.fillStyle=DIL+a+')'; ctx.beginPath();
+          ctx.moveTo(left,baseY); ctx.quadraticCurveTo(cx-w*0.15,top+8,cx,top);
+          ctx.quadraticCurveTo(cx+w*0.2,top+10,left+w,baseY); ctx.closePath(); ctx.fill(); ctx.restore();
+        });
+        stroke([{x:cx-W*0.24*s,y:baseY},{x:cx-W*0.05*s,y:baseY-H*0.26*s},{x:cx,y:baseY-H*0.3*s},{x:cx+W*0.2*s,y:baseY}],2.4,1.2,.6);
+        break; }
+      case 'moon': {
+        const mx=W*0.68,my=H*0.26,r=Math.min(W,H)*0.16*(primary?1:.7);
+        wash(mx,my,r*1.7,r*1.7,.18);
+        ctx.save(); ctx.beginPath(); ctx.arc(mx,my,r,0,7);
+        ctx.fillStyle='rgba(246,240,225,.85)'; ctx.fill();
+        ctx.lineWidth=1.4; ctx.strokeStyle='rgba(40,35,26,.5)'; ctx.stroke(); ctx.restore();
+        break; }
+      case 'sun': {
+        const mx=W*0.68,my=H*0.28,r=Math.min(W,H)*0.15;
+        ctx.save(); ctx.beginPath(); ctx.arc(mx,my,r,0,7);
+        ctx.fillStyle='rgba(178,58,46,.38)'; ctx.fill(); ctx.restore();
+        break; }
+      case 'sea': case 'wave': {
+        const base=H*0.6;
+        for(let i=0;i<5;i++){ const y=base+i*10; const pts=[];
+          for(let x=4;x<=W-4;x+=10) pts.push({x,y:y+Math.sin((x+i*25)/16)*5*(1-i*0.12)});
+          stroke(pts,1.8,1.0,.4-i*0.05);
+        } break; }
+      case 'river': {
+        const pts=[]; for(let y=H*0.32;y<=H*0.9;y+=8) pts.push({x:cx+Math.sin(y/26)*W*0.16, y});
+        stroke(pts,W*0.13,W*0.04,.16); stroke(pts,1.4,1.0,.4); break; }
+      case 'crane': {
+        const bx=cx,by=H*0.5;
+        stroke([{x:bx-30*s,y:by+18*s},{x:bx-8*s,y:by-6*s},{x:bx,y:by-24*s},{x:bx+6*s,y:by-30*s}],2.2,1,.7); // 首
+        ctx.save(); ctx.fillStyle='rgba(30,26,18,.75)'; ctx.beginPath();
+        ctx.ellipse(bx-2*s,by+8*s,20*s,10*s,-0.2,0,7); ctx.fill(); ctx.restore(); // 胴
+        stroke([{x:bx+6*s,y:by-30*s},{x:bx+16*s,y:by-30*s}],2,1,.8); // 嘴
+        stroke([{x:bx-6*s,y:by+16*s},{x:bx-10*s,y:by+40*s}],1.6,1,.6);
+        stroke([{x:bx+4*s,y:by+16*s},{x:bx+2*s,y:by+40*s}],1.6,1,.6); break; }
+      case 'bird': {
+        const bx=cx,by=H*0.34;
+        stroke([{x:bx-26*s,y:by},{x:bx-6*s,y:by-12*s},{x:bx,y:by}],2,1,.7);
+        stroke([{x:bx,y:by},{x:bx+8*s,y:by-13*s},{x:bx+28*s,y:by}],1,2,.7);
+        const b2x=bx+W*0.22,b2y=by+H*0.1;
+        stroke([{x:b2x-16*s,y:b2y},{x:b2x-3*s,y:b2y-8*s},{x:b2x,y:b2y}],1.4,.8,.5);
+        stroke([{x:b2x,y:b2y},{x:b2x+5*s,y:b2y-9*s},{x:b2x+16*s,y:b2y}],.8,1.4,.5); break; }
+      case 'fish': {
+        const fx=cx,fy=H*0.66;
+        ctx.save(); ctx.fillStyle='rgba(30,26,18,.7)'; ctx.beginPath();
+        ctx.ellipse(fx,fy,26*s,10*s,-0.15,0,7); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(fx+24*s,fy); ctx.lineTo(fx+40*s,fy-10*s); ctx.lineTo(fx+40*s,fy+10*s); ctx.closePath(); ctx.fill();
+        ctx.fillStyle='#e6dcc4'; ctx.beginPath(); ctx.arc(fx-14*s,fy-2*s,2,0,7); ctx.fill(); ctx.restore(); break; }
+      case 'bamboo': {
+        for(let k=0;k<(primary?2:1);k++){
+          const x=cx+(k?W*0.16:0); const pts=[]; for(let y=H*0.9;y>H*0.2;y-=10) pts.push({x:x+Math.sin(y/60)*4,y});
+          stroke(pts,4*s,2*s,.7);
+          for(let y=H*0.8;y>H*0.28;y-=H*0.16){ ctx.save(); ctx.strokeStyle=INK; ctx.globalAlpha=.6; ctx.lineWidth=2*s;
+            ctx.beginPath(); ctx.moveTo(x-4*s,y); ctx.lineTo(x+4*s,y); ctx.stroke(); ctx.restore(); }
+          [ -1,1,-1 ].forEach((d,i)=> stroke([{x,y:H*(0.3+i*0.08)},{x:x+d*24*s,y:H*(0.26+i*0.08)},{x:x+d*40*s,y:H*(0.3+i*0.08)}],2,.5,.6));
+        } break; }
+      case 'pine': {
+        const px=cx; stroke([{x:px,y:H*0.9},{x:px+6*s,y:H*0.6},{x:px-4*s,y:H*0.4}],4*s,2*s,.7);
+        for(let i=0;i<5;i++){ const ang=-1.2+i*0.5, len=22*s; const bx=px-4*s,by=H*0.45+i*4;
+          for(let j=-1;j<=1;j++) stroke([{x:bx,y:by},{x:bx+Math.cos(ang+j*0.2)*len,y:by+Math.sin(ang+j*0.2)*len}],1.2,.4,.5);
+        } break; }
+      case 'plum': case 'cherry': {
+        const bx=W*0.2, by=H*0.75;
+        stroke([{x:bx,y:by},{x:cx,y:H*0.45},{x:cx+W*0.24,y:H*0.32}],3*s,1,.7);
+        const petal = m==='plum' ? 'rgba(200,110,130,.8)' : 'rgba(235,190,205,.85)';
+        for(let i=0;i<(primary?6:3);i++){ const fx=cx-20+rng()*W*0.4, fy=H*0.3+rng()*H*0.25;
+          ctx.save(); ctx.fillStyle=petal;
+          for(let k=0;k<5;k++){ const a=k/5*6.28; ctx.beginPath(); ctx.arc(fx+Math.cos(a)*4,fy+Math.sin(a)*4,3,0,7); ctx.fill(); }
+          ctx.fillStyle='rgba(178,58,46,.9)'; ctx.beginPath(); ctx.arc(fx,fy,1.6,0,7); ctx.fill(); ctx.restore();
+        } break; }
+      case 'maple': {
+        for(let i=0;i<(primary?7:3);i++){ const lx=20+rng()*(W-40), ly=H*0.25+rng()*H*0.4, sz=6+rng()*5;
+          ctx.save(); ctx.translate(lx,ly); ctx.rotate(rng()*6.28); ctx.fillStyle='rgba(170,60,30,.75)';
+          for(let k=0;k<5;k++){ ctx.rotate(1.256); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-sz*0.4,-sz); ctx.lineTo(sz*0.4,-sz); ctx.closePath(); ctx.fill(); }
+          ctx.restore();
+        } break; }
+      case 'lotus': {
+        const lx=cx,ly=H*0.62;
+        ctx.save(); ctx.strokeStyle=DIL+'.5)'; ctx.lineWidth=1.4; ctx.beginPath(); ctx.ellipse(lx+30,ly+6,26,8,0,0,7); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.fillStyle='rgba(220,150,170,.7)';
+        for(let k=-2;k<=2;k++){ ctx.beginPath(); ctx.ellipse(lx+k*8,ly-14,5,16,k*0.28,0,7); ctx.fill(); }
+        ctx.fillStyle='rgba(120,140,70,.7)'; ctx.beginPath(); ctx.ellipse(lx,ly-6,7,10,0,0,7); ctx.fill(); ctx.restore();
+        stroke([{x:lx,y:ly+2},{x:lx-2,y:H*0.9}],2,1.2,.5); break; }
+      case 'grass': case 'reed': {
+        for(let i=0;i<9;i++){ const x=10+i*(W-20)/9+rng()*6, h=H*(0.3+rng()*0.35);
+          stroke([{x,y:H*0.92},{x:x+ (rng()-0.5)*20,y:H*0.92-h*0.6},{x:x+(rng()-0.5)*30,y:H*0.92-h}],2,.4,.55);
+        } break; }
+      case 'snow': {
+        wash(W*0.5,H*0.75,W*0.6,H*0.3,.16);
+        ctx.save(); ctx.fillStyle='rgba(250,246,236,.9)';
+        for(let i=0;i<40;i++){ ctx.globalAlpha=.5+rng()*.5; ctx.beginPath(); ctx.arc(rng()*W,rng()*H,1+rng()*2,0,7); ctx.fill(); }
+        ctx.restore(); break; }
+      case 'rain': {
+        ctx.save(); ctx.strokeStyle='rgba(40,35,26,.4)'; ctx.lineWidth=1;
+        for(let i=0;i<34;i++){ const x=rng()*W,y=rng()*H*0.9; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x-5,y+16); ctx.stroke(); }
+        ctx.restore(); break; }
+      case 'cloud': case 'mist': {
+        for(let i=0;i<3;i++) wash(W*(0.3+rng()*0.4), H*(0.25+i*0.12), W*0.4, H*0.08, .16); break; }
+      case 'star': {
+        ctx.save(); ctx.fillStyle='rgba(40,35,26,.6)';
+        for(let i=0;i<3;i++){ const x=W*(0.25+i*0.25)+rng()*10, y=H*0.3+rng()*20;
+          for(let k=0;k<4;k++){ const a=k/4*3.14; ctx.save(); ctx.translate(x,y); ctx.rotate(a);
+            ctx.beginPath(); ctx.moveTo(-6,0); ctx.lineTo(6,0); ctx.lineWidth=1; ctx.strokeStyle='rgba(40,35,26,.5)'; ctx.stroke(); ctx.restore(); } }
+        // 天の河
+        const pts=[]; for(let x=0;x<=W;x+=12) pts.push({x,y:H*0.4+Math.sin(x/40)*14}); stroke(pts,W*0.06,W*0.02,.08);
+        ctx.restore(); break; }
+      default: { // enso 円相
+        const r=Math.min(W,H)*0.3*(primary?1:.6), mx=W*0.5,my=H*0.5, pts=[];
+        for(let a=-0.3;a<6.0;a+=0.12) pts.push({x:mx+Math.cos(a)*r*(1+Math.sin(a*3)*0.02), y:my+Math.sin(a)*r});
+        stroke(pts, 6*s, 2*s, .7);
+      }
+    }
+  }
+  function seal(ctx,W,H,ch){
+    const s=20, x=8, y=H-8-s;
+    ctx.save(); ctx.fillStyle='#b23a2e'; roundRect(ctx,x,y,s,s,3); ctx.fill();
+    ctx.fillStyle='#efe7d3'; ctx.font='16px "Yuji Syuku","Shippori Mincho",serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(ch,x+s/2,y+s/2+1); ctx.restore();
+  }
+  function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+}
+
+/* ============================================================
+   巻物への描出
+   ============================================================ */
+let verseCount = 0;
+const MAX_PANELS = 60;
+
+function addPanel(triple, verse){
+  if (emptyEl && emptyEl.parentNode){ emptyEl.remove(); }
+
+  const following = stage.scrollLeft < 10;
+
+  const panel = document.createElement('div');
+  panel.className = 'panel';
+
+  const art = document.createElement('div'); art.className='art';
+  const cv = document.createElement('canvas'); art.appendChild(cv);
+
+  const verseEl = document.createElement('div'); verseEl.className='verse';
+  [verse.kami, verse.naka, verse.shimo].forEach(t=>{
+    const ln = document.createElement('div'); ln.className='line ink-in'; ln.textContent=t; verseEl.appendChild(ln);
+  });
+  verseEl.addEventListener('click', ()=> panel.classList.toggle('reveal'));
+
+  const hint = document.createElement('div'); hint.className='reveal-hint'; hint.textContent='なぞって読み下す';
+
+  const foot = document.createElement('div'); foot.className='foot';
+  const sTxt = triple.s.type==='literal' ? '“'+triple.s.label+'”' : triple.s.label;
+  const oTxt = triple.o.type==='literal' ? '“'+triple.o.label+'”' : triple.o.label;
+  foot.innerHTML = `<b>${esc(sTxt)}</b> ・ ${esc(humanize(triple.p.label))} ・ <b>${esc(oTxt)}</b>`;
+
+  panel.append(art, verseEl, hint, foot);
+  stage.insertBefore(panel, stage.firstChild);   // 最新句は左端（縦書きの行と同じく右→左へ）
+
+  // canvas はレイアウト確定後に描く
+  requestAnimationFrame(()=> drawSumi(cv, verse));
+
+  // 巻物の長さを制限（古い右端から巻き取る）
+  while (stage.children.length > MAX_PANELS) stage.removeChild(stage.lastChild);
+
+  if (following) requestAnimationFrame(()=> { stage.scrollLeft = 0; });
+
+  verseCount++;
+  countEl.textContent = kanjiNum(verseCount)+'句';
+}
+function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function kanjiNum(n){ const d='〇一二三四五六七八九'; if(n<10) return d[n]; if(n<100){const t=Math.floor(n/10),o=n%10; return (t>1?d[t]:'')+'十'+(o?d[o]:'');} return String(n); }
+
+/* ============================================================
+   連歌の進行
+   ============================================================ */
+let triples = [];
+let order = [];
+let cursor = 0;
+let prevVerse = null;
+let playing = false;
+let timer = null;
+let intervalMs = 4200;
+let busy = false;
+
+const playBtn = document.getElementById('play');
+const stepBtn = document.getElementById('step');
+
+function loadText(text){
+  const parsed = parseNT(text);
+  if (!parsed.length){ toast('三つ組が読み取れませんでした（n-triples 形式）'); return false; }
+  stop();
+  triples = parsed;
+  order = shuffle([...triples.keys()]);
+  cursor = 0; prevVerse = null;
+  // 盤面をまっさらに
+  [...stage.children].forEach(c=>{ if(c!==emptyEl) c.remove(); });
+  verseCount = 0; countEl.textContent='〇句';
+  toast(`${kanjiNum(triples.length)}の三つ組を巻物に`);
+  return true;
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+
+async function composeNext(){
+  if (busy || !triples.length) return;
+  busy = true;
+  if (cursor >= order.length){ order = shuffle([...triples.keys()]); cursor = 0; }  // 一巡したら詠み直す
+  const triple = triples[order[cursor++]];
+  try{
+    const verse = await compose(triple, prevVerse);
+    addPanel(triple, verse);
+    prevVerse = verse;
+  }catch(e){
+    // 最後の砦：ローカル
+    const v = composeLocal(triple, triple.s.label, humanize(triple.p.label), triple.o.label);
+    addPanel(triple, v); prevVerse = v;
+  }finally{
+    busy = false;
+  }
+}
+
+function play(){
+  if (!triples.length){ toast('先にファイルか、お手本を選んでください'); return; }
+  playing = true; playBtn.textContent='ひと休み'; playBtn.classList.remove('primary');
+  const loop = async ()=>{
+    if (!playing) return;
+    await composeNext();
+    if (!playing) return;
+    timer = setTimeout(loop, intervalMs);
+  };
+  loop();
+}
+function stop(){ playing=false; clearTimeout(timer); playBtn.textContent='詠み始める'; playBtn.classList.add('primary'); }
+
+/* ---------- 操作 ---------- */
+playBtn.addEventListener('click', ()=> playing ? stop() : play());
+stepBtn.addEventListener('click', async ()=>{ if(!triples.length){toast('先にファイルか、お手本を選んでください');return;} await composeNext(); });
+document.getElementById('reset').addEventListener('click', ()=>{ if(loadText(SAMPLE)) play(); });
+document.getElementById('file').addEventListener('change', e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{ if(loadText(r.result)) toast('読み込みました。「詠み始める」を'); };
+  r.onerror = ()=> toast('ファイルを読めませんでした');
+  r.readAsText(f);
+});
+document.getElementById('speed').addEventListener('input', e=>{ intervalMs = +e.target.value; });
+
+let toastTimer;
+function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>toastEl.classList.remove('show'),2600); }
+
+/* ---------- 初期化：お手本を読み込んでおく ---------- */
+loadText(SAMPLE);
+</script>
+</body>
+</html>
